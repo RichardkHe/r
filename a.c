@@ -5,6 +5,8 @@
 #include <vector>
 #include <iostream>
 #include <cstdlib>
+#include <math.h>
+#include <cmath>
 
 using namespace std; 
 
@@ -42,6 +44,58 @@ int calcrbits(int n)
    
 }
 
+double calcMean (vector<double> inputlist)
+{
+  double sum =0;
+  int n = inputlist.size();
+  for(int i=0; i<n; i++)
+  {
+    sum += inputlist[i];
+  }
+  cout << double(sum/n) << endl;
+  return double(sum/n);
+}
+
+
+double calcStd(vector<double> inputlist)
+{
+  double mean = calcMean(inputlist);
+
+  double sum =0;
+  for(double i=0; i<inputlist.size(); i++)
+  {
+    sum += (inputlist[i] - mean)*(inputlist[i] - mean);
+  }
+  double std = sum/(inputlist.size()-1);
+  
+  std = sqrt(std);
+
+  return std;
+}
+
+vector<double> conInterval(vector<double> inputlist)
+{
+  double std = calcStd(inputlist);
+  cout << std << endl;
+
+  double mean = calcMean(inputlist);
+
+  double crt = 2.776;
+
+  double c1 = mean - crt*(std/sqrt(inputlist.size()));
+  double c2 = mean + crt*(std/sqrt(inputlist.size()));
+
+  vector<double> myvector;
+  myvector.push_back(c1);
+  myvector.push_back(c2);
+
+
+  cout << myvector.size()<< endl;
+  cout << myvector[0] << endl;
+  cout << myvector[1] << endl;
+  
+  return myvector;
+}
 
 
 
@@ -109,17 +163,14 @@ int main (int argc, char *argv[])
   {
     //cout << argv[i] << " ";
   }
-  cout <<"" << endl;
+
+  vector<double> myvector(5);
+  myvector = {13,23,12,44,55};
+  //for (int i=0; i<2; i++) myvector[i]=i;
+
   
-  cout << calcrbits(1)<< endl;
-  cout << calcrbits(2)<< endl;
-  cout << calcrbits(3)<< endl;
-  cout << calcrbits(4)<< endl;
-  cout << calcrbits(5)<< endl;
-  cout << calcrbits(6)<< endl;
-  cout << calcrbits(10)<< endl;
-  cout << calcrbits(11)<< endl;
-  cout << calcrbits(12)<< endl;
+  
+  conInterval(myvector);
   /*
   if (strcmp( argv[1], "I" ) == 0)
   {
