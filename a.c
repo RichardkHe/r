@@ -298,7 +298,7 @@ int main (int argc, char *argv[])
         //Check each bit of each block
         for(int j = 0; j < length_of_block; j++)
         {
-          if (stcmp(M, "I") ==0)
+          if (strcmp(M, "I") ==0)
           {
             
             if(checkError(e))
@@ -308,7 +308,7 @@ int main (int argc, char *argv[])
           }
           else
           {
-            if (checkBurstError)
+            if (checkBurstError(N, B, e))
             {
               num_of_errors++;
             }
