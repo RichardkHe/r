@@ -181,18 +181,18 @@ int calculateLengthOfBlock(int F, int K)
  = (total number of frame tx including re tx "this be F + retransmissions")/ (the number of frames correctly received)
   
  */
-double avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_counts)
+vector<double> avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_counts)
 {
   //assuming 5 trials
   
-  double sum= 0;
+  vector<double> avgFrameTxRecord;
   
   for(int i =0; i<T; i++)
   {
-    sum = (frame_ok_counts[i] + re_txRecord[i])/frame_ok_counts[i];
+    avgFrameTxRecord.push_back((frame_ok_counts[i] + re_txRecord[i])/frame_ok_counts[i]);
   }
   
-  return sum/5;
+  return avgFrameTxRecord;
 }
 
 
@@ -212,7 +212,7 @@ vector<double> calcThroughputVector(vector<int> clockRecordOfTrails, vector<int>
   
   for(int i=0; i<T; i++)
   {
-    throughputRecord.push_back((F* frame_ok_countRecordOfTrails[i]) / clockRecordOfTrails[i]);
+    throughputRecord.push_back((F* frame_ok_countRecordOfTrails[i]) /R); //clockRecordOfTrails[i]);
     
   }
   
@@ -278,6 +278,8 @@ int main (int argc, char *argv[])
   //Run over T trials. Trails should equal 5.
   for (int z = 0; z < T; z++)
   {
+    srand(seeds[z]); 
+    
     int re_tx;
     int clock = 0;  
     int frame_ok_count = 0;
@@ -353,18 +355,32 @@ int main (int argc, char *argv[])
   }
 
 
+  //=========================================================================================================
+  //For throughput
   vector<double> tempThroughput = calcThroughputVector(clockRecordOfTrails, frame_ok_countRecordOfTrails);
 
   double temp_sum = 0;
   
-  for(int i =0; i<5; i++)
+  for(int i =0; i<T; i++)
   {
     temp_sum += tempThroughput[i];
   }
   vector<double> tempConfidenceInterval = conInterval(tempThroughput);
-    
-  cout << avgFrameTx(re_txRecord, frame_ok_countRecordOfTrails) << endl;
-  cout << temp_sum << " (" << tempConfidenceInterval[0] << ", " << tempConfidenceInterval[1] << ") "<< endl;
+  //=========================================================================================================
+  //for average number of frame tx
+  vector<double> tempAvg = avgFrameTx(re_txRecord, frame_ok_countRecordOfTrails);
+
+  double temp_sumAvg = 0;
+  
+  for(int i =0; i<T; i++)
+  {
+    temp_sumAvg += tempAvg[i];
+  }
+
+  vector<double> tempConfidenceInterval1 = conInterval(tempAvg);
+  //=========================================================================================================
+  cout << temp_sumAvg/T <<" (" << tempConfidenceInterval1[0] << ", " << tempConfidenceInterval1[1] << ") "<< endl;
+  cout << temp_sum/T << " (" << tempConfidenceInterval[0] << ", " << tempConfidenceInterval[1] << ") "<< endl;
 
   return 0;
   
