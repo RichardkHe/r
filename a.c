@@ -234,18 +234,20 @@ int main (int argc, char *argv[])
   int num_of_blocks = K;
   int length_of_block = calculateLengthOfBlock(F, K);
   
-
+  
   
   while(clock < R)
   {
 	int tx_ok = 1;
 	
   	vector<int> blockErrors;
-  	
+
+        //Check all blocks
   	for(int i = 0; i < num_of_blocks;i++)
   	{
   		int num_of_errors = 0;
-  	
+
+                //Check each bit of each block
   		for(int j = 0; j < length_of_block; j++)
   		{
   			if(checkError(e))
@@ -256,7 +258,8 @@ int main (int argc, char *argv[])
   		
   		blockErrors.push_back(num_of_errors);
   	}
-  	
+
+        //Receiver check block errors
   	for(int i = 0; i < num_of_blocks; i++)
   	{
   		if(blockErrors[i] > 1)
@@ -265,7 +268,8 @@ int main (int argc, char *argv[])
   		}
   	
   	}
-  	
+
+        //If tx successful, up frame_ok_count 
   	if(tx_ok){
 	   frame_ok_count++;
 	}
