@@ -271,7 +271,7 @@ int main (int argc, char *argv[])
   vector <int> re_txRecord;
   
   //Run over T trials. Trails should equal 5.
-  for (int z = 0; z < T; z++)
+  for (int z = 0; z < 5; z++)
   {
     int re_tx;
     int clock = 0;  
@@ -333,7 +333,8 @@ int main (int argc, char *argv[])
   }
 
   
-  cout << avgFrameTx(re_txRecord, frame_ok_countRecordOfTrails) << endl;
+  cout <<"Avergae Frame TX: " << avgFrameTx(re_txRecord, frame_ok_countRecordOfTrails) << endl;
+  //cout <<"Throughput and confidence interval " << endl;
 
   return 0;
   
