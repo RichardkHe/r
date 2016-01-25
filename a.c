@@ -181,7 +181,7 @@ int calculateLengthOfBlock(int F, int K)
  = (total number of frame tx including re tx "this be F + retransmissions")/ (the number of frames correctly received)
   
  */
-double avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_countRecordOfTrails )
+double avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_counts)
 {
   //assuming 5 trials
   
@@ -189,7 +189,7 @@ double avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_countRecordOfTr
   
   for(int i =0; i<T; i++)
   {
-    sum = (F + re_txRecord[i])/frame_ok_countRecordOfTrails[i];
+    sum = (frame_ok_counts[i] + re_txRecord[i])/frame_ok_counts[i];
   }
   
   return sum/5;
