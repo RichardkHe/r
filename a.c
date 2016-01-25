@@ -204,19 +204,22 @@ double avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_countRecordOfTr
   
  */
 
-double calcThroughput(vector<int> clockRecordOfTrails, vector<int> frame_ok_countRecordOfTrails)
+vector<double> calcThroughputVector(vector<int> clockRecordOfTrails, vector<int> frame_ok_countRecordOfTrails)
 {
   //Right now assuming total time is the clockRecord, and 5 trials
-  double sum = 0;
+  
+  vector<double> throughputRecord;
   
   for(int i=0; i<5; i++)
   {
-    sum = (F* frame_ok_countRecordOfTrails[i]) / clockRecordOfTrails[i];
+    throughputRecord.push_back((F* frame_ok_countRecordOfTrails[i]) / clockRecordOfTrails[i]);
     
   }
   
-  return sum/5;
+  return throughputRecord;
 }
+
+
 
 //=============================================================================================
 
@@ -299,6 +302,7 @@ int main (int argc, char *argv[])
           {
             num_of_errors++;
           }
+          clock++;
         }
   	
         blockErrors.push_back(num_of_errors);
@@ -327,7 +331,7 @@ int main (int argc, char *argv[])
         
       }
       
-      clock++;
+      //clock++;
     }
     
 
@@ -337,9 +341,19 @@ int main (int argc, char *argv[])
     
   }
 
+
+  vector<double> tempThroughput = calcThroughputVector(clockRecordOfTrails, frame_ok_countRecordOfTrails);
+
+  double temp_sum = 0;
   
-  cout <<"Avergae Frame TX: " << avgFrameTx(re_txRecord, frame_ok_countRecordOfTrails) << endl;
-  cout <<"Throughput:  " << calcThroughput(clockRecordOfTrails, frame_ok_countRecordOfTrails)  << endl;
+  for(int i =0; i<5; i++)
+  {
+    temp_sum += tempThroughput[i];
+  }
+  vector<double> tempConfidenceInterval = conInterval(tempThroughput);
+    
+  cout << avgFrameTx(re_txRecord, frame_ok_countRecordOfTrails) << endl;
+  cout << temp_sum << " (" << tempConfidenceInterval[0] << ", " << tempConfidenceInterval[1] << ") "<< endl;
 
   return 0;
   
