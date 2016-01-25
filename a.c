@@ -172,6 +172,28 @@ int calculateLengthOfBlock(int F, int K)
 	return bitsPerBlock + r_bits;
 }
 
+/*
+ calculate the average number of frame tx's
+ = (total number of frame tx including re tx)/ (the number of frames correctly received)
+  
+ */
+double avgFrameTx(int total_tx, int frame_ok_count)
+{
+  return total_tx/frame_ok_count;
+}
+
+
+/*
+  Through = (F * the total number of correctly received frames)/(the total time required
+  to correctly receive these frames)
+  
+ */
+
+double calcThroughput(int F, int frame_ok_count, int total_time)
+{
+  return F*frame_ok_count/total_time;
+}
+
 
 
 int main (int argc, char *argv[])
