@@ -187,7 +187,7 @@ double avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_countRecordOfTr
   
   double sum= 0;
   
-  for(int i =0; i<5; i++)
+  for(int i =0; i<T; i++)
   {
     sum = (F + re_txRecord[i])/frame_ok_countRecordOfTrails[i];
   }
@@ -210,7 +210,7 @@ vector<double> calcThroughputVector(vector<int> clockRecordOfTrails, vector<int>
   
   vector<double> throughputRecord;
   
-  for(int i=0; i<5; i++)
+  for(int i=0; i<T; i++)
   {
     throughputRecord.push_back((F* frame_ok_countRecordOfTrails[i]) / clockRecordOfTrails[i]);
     
@@ -276,7 +276,7 @@ int main (int argc, char *argv[])
   vector <int> re_txRecord;
   
   //Run over T trials. Trails should equal 5.
-  for (int z = 0; z < 5; z++)
+  for (int z = 0; z < T; z++)
   {
     int re_tx;
     int clock = 0;  
