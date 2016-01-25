@@ -183,8 +183,8 @@ int calculateLengthOfBlock(int F, int K)
  */
 double avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_countRecordOfTrails )
 {
-  //for 5 trails T =5
-
+  //assuming 5 trials
+  
   double sum= 0;
   
   for(int i =0; i<5; i++)
@@ -206,14 +206,16 @@ double avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_countRecordOfTr
 
 double calcThroughput(vector<int> clockRecordOfTrails, vector<int> frame_ok_countRecordOfTrails)
 {
-  //double sum = 0;
+  //Right now assuming total time is the clockRecord, and 5 trials
+  double sum = 0;
   
   for(int i=0; i<5; i++)
   {
+    sum = (F* frame_ok_countRecordOfTrails[i]) / clockRecordOfTrails[i];
     
   }
   
-  return 0;
+  return sum/5;
 }
 
 //=============================================================================================
@@ -302,6 +304,9 @@ int main (int argc, char *argv[])
         blockErrors.push_back(num_of_errors);
       }
       
+      //Sender waits for receiver
+      clock += A;
+      
       //Receiver check block errors
       for(int i = 0; i < num_of_blocks; i++)
       {
@@ -311,8 +316,7 @@ int main (int argc, char *argv[])
         }
   	
       }
-      
-      //If tx successful, up frame_ok_count 
+      //Sender checks if frame tx successful, up frame_ok_count 
       if(tx_ok){
 	   frame_ok_count++;
       }
@@ -325,6 +329,7 @@ int main (int argc, char *argv[])
       
       clock++;
     }
+    
 
     clockRecordOfTrails.push_back(clock);
     frame_ok_countRecordOfTrails.push_back(frame_ok_count);
@@ -334,7 +339,7 @@ int main (int argc, char *argv[])
 
   
   cout <<"Avergae Frame TX: " << avgFrameTx(re_txRecord, frame_ok_countRecordOfTrails) << endl;
-  //cout <<"Throughput and confidence interval " << endl;
+  cout <<"Throughput:  " << calcThroughput(clockRecordOfTrails, frame_ok_countRecordOfTrails)  << endl;
 
   return 0;
   
