@@ -206,14 +206,14 @@ double avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_countRecordOfTr
 
 double calcThroughput(vector<int> clockRecordOfTrails, vector<int> frame_ok_countRecordOfTrails)
 {
-  double sum = 0;
+  //double sum = 0;
   
   for(int i=0; i<5; i++)
   {
     
   }
   
-  return F*frame_ok_count/total_time;
+  return 0;
 }
 
 //=============================================================================================
@@ -332,6 +332,8 @@ int main (int argc, char *argv[])
     
   }
 
+  
+  cout << avgFrameTx(re_txRecord, frame_ok_countRecordOfTrails) << endl;
 
   return 0;
   
