@@ -234,7 +234,16 @@ int main (int argc, char *argv[])
   int num_of_blocks = K;
   int length_of_block = calculateLengthOfBlock(F, K);
   
-  
+
+  /*
+    TO DO
+    
+    keep track of retransmissions?
+
+    include A(feedback time 50bit time units?)
+
+    5 trials
+   */
   
   while(clock < R)
   {
