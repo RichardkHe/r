@@ -45,8 +45,6 @@ int calcrbits(int n)
   int i= 0;
   while(n>0)
   {
-//cout <<"i = " <<i << endl;
-    //  cout <<"n = " << n<< endl;
     i++;
     if(isPowerOfTwo(i))
     {
@@ -66,7 +64,7 @@ double calcMean (vector<double> inputlist)
   {
     sum += inputlist[i];
   }
-  cout << double(sum/n) << endl;
+
   return double(sum/n);
 }
 
@@ -90,7 +88,6 @@ double calcStd(vector<double> inputlist)
 vector<double> conInterval(vector<double> inputlist)
 {
   double std = calcStd(inputlist);
-  cout << std << endl;
 
   double mean = calcMean(inputlist);
 
@@ -102,17 +99,9 @@ vector<double> conInterval(vector<double> inputlist)
   vector<double> myvector;
   myvector.push_back(c1);
   myvector.push_back(c2);
-
-
-  cout << myvector.size()<< endl;
-  cout << myvector[0] << endl;
-  cout << myvector[1] << endl;
   
   return myvector;
 }
-
-
-
 
 
 double randd()
@@ -175,6 +164,14 @@ void printArgumentError(int argc)
     printf("Refer to the Readme.md to see proper execution parameters.\n");
 }
 
+int calculateLengthOfBlock(int F, int K)
+{
+	int bitsPerBlock = F/K;
+	int r_bits = calcrbits(F/K);
+	
+	return bitsPerBlock + r_bits;
+}
+
 
 
 int main (int argc, char *argv[])
@@ -209,6 +206,51 @@ int main (int argc, char *argv[])
     cout << "B mode" << endl;
   }
   */
+  
+  int clock = 0;  
+  int frame_ok_count = 0;
+  int num_of_blocks = K;
+  int length_of_block = calculateLengthOfBlock(F, K);
+  
+
+  
+  while(clock < R)
+  {
+	int tx_ok = 1;
+	
+  	vector<int> blockErrors;
+  	
+  	for(int i = 0; i < num_of_blocks;i++)
+  	{
+  		int num_of_errors = 0;
+  	
+  		for(int j = 0; j < length_of_block; j++)
+  		{
+  			if(checkError(e))
+  			{
+  				num_of_errors++;
+  			}
+  		}
+  		
+  		blockErrors.push_back(num_of_errors);
+  	}
+  	
+  	for(int i = 0; i < num_of_blocks; i++)
+  	{
+  		if(blockErrors[i] > 1)
+  		{
+			tx_ok = 0; 		
+  		}
+  	
+  	}
+  	
+  	if(tx_ok){
+	   frame_ok_count++;
+	}
+	
+  	clock++;
+  }
+
 
   return 0;
   
