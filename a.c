@@ -172,27 +172,51 @@ int calculateLengthOfBlock(int F, int K)
 	return bitsPerBlock + r_bits;
 }
 
+//=============================================================================================
 /*
+
+  AVERAGED OVER 5 trail runs
+  
  calculate the average number of frame tx's
- = (total number of frame tx including re tx)/ (the number of frames correctly received)
+ = (total number of frame tx including re tx "this be F + retransmissions")/ (the number of frames correctly received)
   
  */
-double avgFrameTx(int total_tx, int frame_ok_count)
+double avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_countRecordOfTrails )
 {
-  return total_tx/frame_ok_count;
+  //for 5 trails T =5
+
+  double sum= 0;
+  
+  for(int i =0; i<5; i++)
+  {
+    sum = (F + re_txRecord[i])/frame_ok_countRecordOfTrails[i];
+  }
+  
+  return sum/5;
 }
 
 
 /*
+  AVERAGED OVER 5 trail runs
+  
   Through = (F * the total number of correctly received frames)/(the total time required
   to correctly receive these frames)
   
  */
 
-double calcThroughput(int F, int frame_ok_count, int total_time)
+double calcThroughput(vector<int> clockRecordOfTrails, vector<int> frame_ok_countRecordOfTrails)
 {
+  double sum = 0;
+  
+  for(int i=0; i<5; i++)
+  {
+    
+  }
+  
   return F*frame_ok_count/total_time;
 }
+
+//=============================================================================================
 
 
 
@@ -210,15 +234,11 @@ int main (int argc, char *argv[])
 
   printInputArguments();
   
-  
+  /*
   vector<double> myvector(5);
   myvector = {13,23,12,44,55};
   //for (int i=0; i<2; i++) myvector[i]=i;
-
-  
-  
   conInterval(myvector);
-  /*
   if (strcmp( argv[1], "I" ) == 0)
   {
     cout << "I mode" << endl;
@@ -228,14 +248,8 @@ int main (int argc, char *argv[])
     cout << "B mode" << endl;
   }
   */
-  
-  int clock = 0;  
-  int frame_ok_count = 0;
-  int num_of_blocks = K;
-  int length_of_block = calculateLengthOfBlock(F, K);
-  
 
-  /*
+    /*
     TO DO
     
     keep track of retransmissions?
@@ -244,46 +258,78 @@ int main (int argc, char *argv[])
 
     5 trials
    */
+
   
-  while(clock < R)
+  int num_of_blocks = K;
+  int length_of_block = calculateLengthOfBlock(F, K);
+
+
+  //Store results
+
+  vector <int> clockRecordOfTrails;
+  vector <int> frame_ok_countRecordOfTrails;
+  vector <int> re_txRecord;
+  
+  //Run over T trials. Trails should equal 5.
+  for (int z = 0; z < T; z++)
   {
-	int tx_ok = 1;
-	
-  	vector<int> blockErrors;
+    int re_tx;
+    int clock = 0;  
+    int frame_ok_count = 0;
+    //int num_of_blocks = K;
+    //int length_of_block = calculateLengthOfBlock(F, K);
+  
+    while(clock < R)
+    {
+      int tx_ok = 1;
+      
+      vector<int> blockErrors;
+      
+      //Check all blocks
+      for(int i = 0; i < num_of_blocks;i++)
+      {
+        int num_of_errors = 0;
 
-        //Check all blocks
-  	for(int i = 0; i < num_of_blocks;i++)
-  	{
-  		int num_of_errors = 0;
-
-                //Check each bit of each block
-  		for(int j = 0; j < length_of_block; j++)
-  		{
-  			if(checkError(e))
-  			{
-  				num_of_errors++;
-  			}
-  		}
-  		
-  		blockErrors.push_back(num_of_errors);
-  	}
-
-        //Receiver check block errors
-  	for(int i = 0; i < num_of_blocks; i++)
-  	{
-  		if(blockErrors[i] > 1)
-  		{
-			tx_ok = 0; 		
-  		}
+        //Check each bit of each block
+        for(int j = 0; j < length_of_block; j++)
+        {
+          if(checkError(e))
+          {
+            num_of_errors++;
+          }
+        }
   	
-  	}
-
-        //If tx successful, up frame_ok_count 
-  	if(tx_ok){
+        blockErrors.push_back(num_of_errors);
+      }
+      
+      //Receiver check block errors
+      for(int i = 0; i < num_of_blocks; i++)
+      {
+        if(blockErrors[i] > 1)
+        {
+          tx_ok = 0; 		
+        }
+  	
+      }
+      
+      //If tx successful, up frame_ok_count 
+      if(tx_ok){
 	   frame_ok_count++;
-	}
-	
-  	clock++;
+      }
+      //else we add additional A bit time for frames that were eventually received correctly
+      //and deal with retransmissions
+      else{
+        re_tx++;
+        
+      }
+      
+      clock++;
+    }
+
+    clockRecordOfTrails.push_back(clock);
+    frame_ok_countRecordOfTrails.push_back(frame_ok_count);
+    re_txRecord.push_back(re_tx);
+    
   }
 
 
