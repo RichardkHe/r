@@ -198,8 +198,8 @@ vector<double> avgFrameTx(vector<double> re_txRecord , vector<double> frame_ok_c
   for(int i =0; i<T; i++)
   {
     //cout << frame_ok_counts[i] << endl;
-    cout << 5/2.3 << endl;
-    cout << (frame_ok_counts[i] + re_txRecord[i])/frame_ok_counts[i]<< endl;
+    //cout << 5/2.3 << endl;
+    //cout << (frame_ok_counts[i] + re_txRecord[i])/frame_ok_counts[i]<< endl;
     avgFrameTxRecord.push_back((frame_ok_counts[i] + re_txRecord[i])/frame_ok_counts[i]);
   }
 
@@ -223,7 +223,8 @@ vector<double> calcThroughputVector(int R, vector<double> frame_ok_countRecordOf
 
   for(int i=0; i<T; i++)
   {
-    throughputRecord.push_back((F* frame_ok_countRecordOfTrails[i])/R);
+    cout << (F* frame_ok_countRecordOfTrails[i])/double(R) << endl;
+    throughputRecord.push_back((F* frame_ok_countRecordOfTrails[i])/double(R));
   }
 
   return throughputRecord;
