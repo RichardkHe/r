@@ -194,7 +194,7 @@ vector<double> avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_counts)
 
   for(int i =0; i<T; i++)
   {
-    avgFrameTxRecord.push_back((frame_ok_counts[i] + re_txRecord[i])/frame_ok_counts[i]);
+      avgFrameTxRecord.push_back((frame_ok_counts[i] + re_txRecord[i])/frame_ok_counts[i]);
   }
 
   return avgFrameTxRecord;
@@ -258,7 +258,7 @@ int main (int argc, char *argv[])
   {
     srand(seeds[z]);
 
-    int re_tx;
+    int re_tx =0;
     int clock = 0;
     int frame_ok_count = 0;
     //int num_of_blocks = K;
@@ -288,6 +288,7 @@ int main (int argc, char *argv[])
               num_of_errors++;
             }
           }
+          clock++;
         }
 
         if (num_of_errors > 1)
@@ -358,6 +359,12 @@ int main (int argc, char *argv[])
     frames_transmitted.push_back(frame_ok_count);
     re_txRecord.push_back(re_tx);
   }
+
+  cout << "F:" << frames_transmitted[0] << "Re-Tran:" << re_txRecord[0] <<endl;
+  cout << "F:" << frames_transmitted[1] << "Re-Tran:" << re_txRecord[1] <<endl;
+  cout << "F:" << frames_transmitted[2] << "Re-Tran:" << re_txRecord[2] <<endl;
+  cout << "F:" << frames_transmitted[3] << "Re-Tran:" << re_txRecord[3] <<endl;
+  cout << "F:" << frames_transmitted[4] << "Re-Tran:" << re_txRecord[4] <<endl;
 
 
   //=========================================================================================================
