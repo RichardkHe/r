@@ -30,6 +30,9 @@ int N;
 int R;
 int T;
 vector<double> seeds;
+
+int N_cpy;
+int B_cpy;
 //-----------------------------
 
 int isPowerOfTwo (unsigned int x)
@@ -186,7 +189,7 @@ int calculateLengthOfBlock(int F, int K)
  = (total number of frame tx including re tx "this be F + retransmissions")/ (the number of frames correctly received)
 
  */
-vector<double> avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_counts)
+vector<double> avgFrameTx(vector<double> re_txRecord , vector<double> frame_ok_counts)
 {
   //assuming 5 trials
 
@@ -194,7 +197,10 @@ vector<double> avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_counts)
 
   for(int i =0; i<T; i++)
   {
-      avgFrameTxRecord.push_back((frame_ok_counts[i] + re_txRecord[i])/frame_ok_counts[i]);
+    //cout << frame_ok_counts[i] << endl;
+    cout << 5/2.3 << endl;
+    cout << (frame_ok_counts[i] + re_txRecord[i])/frame_ok_counts[i]<< endl;
+    avgFrameTxRecord.push_back((frame_ok_counts[i] + re_txRecord[i])/frame_ok_counts[i]);
   }
 
   return avgFrameTxRecord;
@@ -209,7 +215,7 @@ vector<double> avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_counts)
 
  */
 
-vector<double> calcThroughputVector(int R, vector<int> frame_ok_countRecordOfTrails)
+vector<double> calcThroughputVector(int R, vector<double> frame_ok_countRecordOfTrails)
 {
   //Right now assuming total time is the clockRecord, and 5 trials
 
@@ -224,43 +230,13 @@ vector<double> calcThroughputVector(int R, vector<int> frame_ok_countRecordOfTra
 }
 
 
-//=============================================================================================
-
-
-int generateRandomError(int length_block, int *clock)
-{
-  int num_of_errors = 0;
-  //Check each bit of each block
-  
-  for(int j = 0; j < length_block; j++)
-  {
-    if (strcmp(M, "I") ==0)
-    {
-      
-      if(checkError(e))
-      {
-        num_of_errors++;
-      }
-    }
-    else
-    {
-      if (checkBurstError(N, B, e))
-      {
-        num_of_errors++;
-      }
-    }
-    (*clock)++;
-  }
-  return num_of_errors;
-
-}
-
 //--------------------------------------------------------------------------------------------------------------------------------
 
 int GetNumberBurstOfErrors(int N, int B, int F, int * clock)
 {
-  int N_cpy = N;
-  int B_cpy = B;
+  //int N_cpy = N;
+  //int B_cpy = B;
+  
   bool isBurstPeriod = false;
   
   int NumErrors = 0;
@@ -302,6 +278,41 @@ int GetNumberBurstOfErrors(int N, int B, int F, int * clock)
 
 //--------------------------------------------------------------------------
 
+//=============================================================================================
+
+
+int generateRandomError(int length_block, int *clock)
+{
+  int num_of_errors = 0;
+  //Check each bit of each block
+  if (strcmp(M, "I") ==0)
+  {
+    //Independent model
+    for(int j = 0; j < length_block; j++)
+    {
+       
+      if(checkError(e))
+      {
+        num_of_errors++;
+      }
+      
+      
+      (*clock)++;
+    }
+  }
+
+  else //Burst model
+  {
+    num_of_errors = GetNumberBurstOfErrors(N, B, F, clock);
+  }
+  
+  return num_of_errors;
+
+}
+
+//=============================================================================================
+
+
 vector<int> generateBlockErrors(int num_of_blocks, int length_of_block, int *clock)
 {
   vector<int> blockErrors;
@@ -339,6 +350,8 @@ int checkBlockErrors(vector<int> blockErrors)
 
 int main (int argc, char *argv[])
 {
+  N_cpy = N;
+  B_cpy = B;
 
   //Check the number of arguments
   if (argc < 11)
@@ -356,8 +369,8 @@ int main (int argc, char *argv[])
   int length_of_block = calculateLengthOfBlock(F, K);
 
   //Store results
-  vector <int> frames_transmitted;
-  vector <int> re_txRecord;
+  vector <double> frames_transmitted;
+  vector <double> re_txRecord;
 
 
 
@@ -369,9 +382,9 @@ int main (int argc, char *argv[])
     {
       srand(seeds[z]);
       
-      int re_tx =0;
+      double re_tx =0;
       int clock = 0;
-      int frame_ok_count = 0;
+      double frame_ok_count = 0;
       
       while(clock < R)
       {
@@ -401,9 +414,9 @@ int main (int argc, char *argv[])
     {
       srand(seeds[z]);
       
-      int re_tx =0;
+      double re_tx =0;
       int clock = 0;
-      int frame_ok_count = 0;
+      double frame_ok_count = 0;
       
       while(clock < R)
       {
@@ -431,24 +444,28 @@ int main (int argc, char *argv[])
   }
 
 
-  /*
+  
   cout << "F:" << frames_transmitted[0] << "Re-Tran:" << re_txRecord[0] <<endl;
   cout << "F:" << frames_transmitted[1] << "Re-Tran:" << re_txRecord[1] <<endl;
   cout << "F:" << frames_transmitted[2] << "Re-Tran:" << re_txRecord[2] <<endl;
   cout << "F:" << frames_transmitted[3] << "Re-Tran:" << re_txRecord[3] <<endl;
   cout << "F:" << frames_transmitted[4] << "Re-Tran:" << re_txRecord[4] <<endl;
-  */
-  int i=0;
-  cout << GetNumberBurstOfErrors(9, 10, 10, &i) << endl;
+  
+  //int i=0;
+  //cout << GetNumberBurstOfErrors(9, 10, 10, &i) << endl;
 
-  //=========================================================================================================
-  //For throughput
-  vector<double> Throughput = calcThroughputVector(R, frames_transmitted);
-  vector<double> ThroughputConfidenceInterval = conInterval(Throughput);
+
+
   //=========================================================================================================
   //for average number of frame tx
   vector<double> avgTxs = avgFrameTx(re_txRecord, frames_transmitted);
   vector<double> avgTxConfidenceInterval = conInterval(avgTxs);
+
+  //=========================================================================================================
+  
+  //For throughput
+  vector<double> Throughput = calcThroughputVector(R, frames_transmitted);
+  vector<double> ThroughputConfidenceInterval = conInterval(Throughput);
   //=========================================================================================================
   cout << calcMean(avgTxs) <<" (" <<  avgTxConfidenceInterval[0] << ", " << avgTxConfidenceInterval[1] << ") "<< endl;
   cout << calcMean(Throughput) <<" (" <<  ThroughputConfidenceInterval[0] << ", " << ThroughputConfidenceInterval[1] << ") "<< endl;
