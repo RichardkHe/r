@@ -250,8 +250,7 @@ int main (int argc, char *argv[])
 
   //Store results
 
-  vector <int> clockRecordOfTrails;
-  vector <int> frame_ok_countRecordOfTrails;
+  vector <int> frames_transmitted;
   vector <int> re_txRecord;
 
   //Run over T trials. Trails should equal 5.
@@ -357,8 +356,7 @@ int main (int argc, char *argv[])
 
       //clock++;
     }
-
-    frame_ok_countRecordOfTrails.push_back(frame_ok_count);
+    frames_transmitted.push_back(frame_ok_count);
     re_txRecord.push_back(re_tx);
 
   }
@@ -366,7 +364,7 @@ int main (int argc, char *argv[])
 
   //=========================================================================================================
   //For throughput
-  vector<double> tempThroughput = calcThroughputVector(R, frame_ok_countRecordOfTrails);
+  vector<double> tempThroughput = calcThroughputVector(R, frames_transmitted);
 
   double temp_sum = 0;
 
@@ -377,7 +375,7 @@ int main (int argc, char *argv[])
   vector<double> tempConfidenceInterval = conInterval(tempThroughput);
   //=========================================================================================================
   //for average number of frame tx
-  vector<double> tempAvg = avgFrameTx(re_txRecord, frame_ok_countRecordOfTrails);
+  vector<double> tempAvg = avgFrameTx(re_txRecord, frames_transmitted);
 
   double temp_sumAvg = 0;
 
