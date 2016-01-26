@@ -224,6 +224,36 @@ vector<double> calcThroughputVector(int R, vector<int> frame_ok_countRecordOfTra
 }
 
 
+//=============================================================================================
+
+
+int generateRandomError(int length_block, int *clock)
+{
+  int num_of_errors = 0;
+  //Check each bit of each block
+  for(int j = 0; j < length_block; j++)
+  {
+    if (strcmp(M, "I") ==0)
+    {
+      
+      if(checkError(e))
+      {
+        num_of_errors++;
+      }
+    }
+    else
+    {
+      if (checkBurstError(N, B, e))
+      {
+        num_of_errors++;
+      }
+    }
+    (*clock)++;
+  }
+  return num_of_errors;
+
+}
+
 
 //=============================================================================================
 
@@ -243,13 +273,11 @@ int main (int argc, char *argv[])
 
   printInputArguments();
 
+  
   int num_of_blocks = K;
-
-
   int length_of_block = calculateLengthOfBlock(F, K);
 
   //Store results
-
   vector <int> frames_transmitted;
   vector <int> re_txRecord;
 
@@ -261,9 +289,7 @@ int main (int argc, char *argv[])
     int re_tx =0;
     int clock = 0;
     int frame_ok_count = 0;
-    //int num_of_blocks = K;
-    //int length_of_block = calculateLengthOfBlock(F, K);
-
+    
     while(clock < R)
     {
       int tx_ok = 1;
@@ -273,28 +299,7 @@ int main (int argc, char *argv[])
       //Check all blocks
       for(int i = 0; i < num_of_blocks;i++)
       {
-        int num_of_errors = 0;
-        
-        //Check each bit of each block
-        for(int j = 0; j < length_of_block; j++)
-          {
-            if (strcmp(M, "I") ==0)
-            {
-              
-              if(checkError(e))
-              {
-                num_of_errors++;
-              }
-            }
-            else
-            {
-              if (checkBurstError(N, B, e))
-              {
-                num_of_errors++;
-              }
-            }
-            clock++;
-          }
+        int num_of_errors = generateRandomError(length_of_block, &clock);
         
         blockErrors.push_back(num_of_errors);
       }
@@ -307,23 +312,17 @@ int main (int argc, char *argv[])
             tx_ok = 0;
           }
         }
-      
-      
       //Sender waits for receiver
       clock += A;
 
-      
       //Sender checks if frame tx successful, up frame_ok_count
       if(tx_ok){
         frame_ok_count++;
       }
-      //else we add additional A bit time for frames that were eventually received correctly
-      //and deal with retransmissions
+      //else we add additional A bit time for frames that were eventually received correctly and deal with tx
       else{
         re_tx++;
       }
-      
-      //clock++;
     }
     frames_transmitted.push_back(frame_ok_count);
     re_txRecord.push_back(re_tx);

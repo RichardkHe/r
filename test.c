@@ -27,3 +27,30 @@
         }
 
       }
+
+
+
+
+
+       //Check each bit of each block
+        for(int j = 0; j < length_of_block; j++)
+          {
+            if (strcmp(M, "I") ==0)
+            {
+              
+              if(checkError(e))
+              {
+                num_of_errors++;
+              }
+            }
+            else
+            {
+              if (checkBurstError(N, B, e))
+              {
+                num_of_errors++;
+              }
+            }
+            clock++;
+          }
+
+
