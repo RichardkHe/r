@@ -284,6 +284,7 @@ int checkBlockErrors(vector<int> blockErrors)
 
 
 
+
 //=============================================================================================
 
 
@@ -310,41 +311,76 @@ int main (int argc, char *argv[])
   vector <int> frames_transmitted;
   vector <int> re_txRecord;
 
-  //Run over T trials. Trails should equal 5.
-  for (int z = 0; z < T; z++)
+
+
+  //=========================================================================================================
+  if(K == 0)
   {
-    srand(seeds[z]);
-
-    int re_tx =0;
-    int clock = 0;
-    int frame_ok_count = 0;
-
-    
-    
-    
-    while(clock < R)
+    //Run over T trials. Trails should equal 5.
+    for (int z = 0; z < T; z++)
     {
-      vector<int> blockErrors;
-
-      //Check all blocks
-      blockErrors = generateBlockErrors(num_of_blocks, length_of_block, &clock);
+      srand(seeds[z]);
       
-      //Sender waits for receiver
-      clock += A;
-
-      //Sender checks if frame tx successful, up frame_ok_count
-      //Receiver check block errors
-      if((!checkBlockErrors(blockErrors))){
-        frame_ok_count++;
+      int re_tx =0;
+      int clock = 0;
+      int frame_ok_count = 0;
+      
+      while(clock < R)
+      {
+        int num_of_errors = generateRandomError(F, &clock);
+        if(num_of_errors > 1)
+        {
+          re_tx++;
+        }
+        else
+        {
+          frame_ok_count++;
+        }
+        
+        clock += A;
       }
-      else{
-        re_tx++;
-      }
+      frames_transmitted.push_back(frame_ok_count);
+      re_txRecord.push_back(re_tx);
     }
-    frames_transmitted.push_back(frame_ok_count);
-    re_txRecord.push_back(re_tx);
   }
-
+  else
+  {
+    //else everything below
+    //=========================================================================================================
+    //working
+    //Run over T trials. Trails should equal 5.
+    for (int z = 0; z < T; z++)
+    {
+      srand(seeds[z]);
+      
+      int re_tx =0;
+      int clock = 0;
+      int frame_ok_count = 0;
+      
+      while(clock < R)
+      {
+        vector<int> blockErrors;
+        
+        //Check all blocks
+        blockErrors = generateBlockErrors(num_of_blocks, length_of_block, &clock);
+        
+        //Sender waits for receiver
+        clock += A;
+        
+        //Sender checks if frame tx successful, up frame_ok_count
+        //Receiver check block errors
+        if((!checkBlockErrors(blockErrors))){
+          frame_ok_count++;
+        }
+        else{
+          re_tx++;
+        }
+      }
+      frames_transmitted.push_back(frame_ok_count);
+      re_txRecord.push_back(re_tx);
+    }
+  //=========================================================================================================
+  }
 
 
   cout << "F:" << frames_transmitted[0] << "Re-Tran:" << re_txRecord[0] <<endl;
