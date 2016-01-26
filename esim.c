@@ -268,50 +268,19 @@ int main (int argc, char *argv[])
     {
       int tx_ok = 1;
 
-      if(K == 0)
+      vector<int> blockErrors;
+      
+      //Check all blocks
+      for(int i = 0; i < num_of_blocks;i++)
       {
         int num_of_errors = 0;
-
-        for (int i =0; i < F; i++)
-        {
-          if (strcmp(M, "I") == 0)
-          {
-            if(checkError(e))
-            {
-              num_of_errors++;
-            }
-          }
-          else
-          {
-            if (checkBurstError(N, B, e))
-            {
-              num_of_errors++;
-            }
-          }
-          clock++;
-        }
-
-        if (num_of_errors > 1)
-        {
-          tx_ok = 0;
-        }
-
-      }
-      else
-      {
-        vector<int> blockErrors;
-
-        //Check all blocks
-        for(int i = 0; i < num_of_blocks;i++)
-        {
-          int num_of_errors = 0;
-
-          //Check each bit of each block
-          for(int j = 0; j < length_of_block; j++)
+        
+        //Check each bit of each block
+        for(int j = 0; j < length_of_block; j++)
           {
             if (strcmp(M, "I") ==0)
             {
-
+              
               if(checkError(e))
               {
                 num_of_errors++;
@@ -326,45 +295,41 @@ int main (int argc, char *argv[])
             }
             clock++;
           }
-
-          blockErrors.push_back(num_of_errors);
-        }
-
-        //Receiver check block errors
-        for(int i = 0; i < num_of_blocks; i++)
+        
+        blockErrors.push_back(num_of_errors);
+      }
+      
+      //Receiver check block errors
+      for(int i = 0; i < num_of_blocks; i++)
         {
           if(blockErrors[i] > 1)
           {
             tx_ok = 0;
           }
         }
-      }
-
+      
+      
       //Sender waits for receiver
       clock += A;
 
-
+      
       //Sender checks if frame tx successful, up frame_ok_count
       if(tx_ok){
-	       frame_ok_count++;
+        frame_ok_count++;
       }
       //else we add additional A bit time for frames that were eventually received correctly
       //and deal with retransmissions
       else{
         re_tx++;
       }
-
+      
       //clock++;
     }
     frames_transmitted.push_back(frame_ok_count);
     re_txRecord.push_back(re_tx);
   }
 
-  cout << "F:" << frames_transmitted[0] << "Re-Tran:" << re_txRecord[0] <<endl;
-  cout << "F:" << frames_transmitted[1] << "Re-Tran:" << re_txRecord[1] <<endl;
-  cout << "F:" << frames_transmitted[2] << "Re-Tran:" << re_txRecord[2] <<endl;
-  cout << "F:" << frames_transmitted[3] << "Re-Tran:" << re_txRecord[3] <<endl;
-  cout << "F:" << frames_transmitted[4] << "Re-Tran:" << re_txRecord[4] <<endl;
+
 
 
   //=========================================================================================================
