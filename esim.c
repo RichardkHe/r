@@ -8,7 +8,7 @@
 #include <math.h>
 #include <cmath>
 
-using namespace std; 
+using namespace std;
 
 //http://www.exploringbinary.com/ten-ways-to-check-if-an-integer-is-a-power-of-two-in-c/
 /*
@@ -53,7 +53,7 @@ int calcrbits(int n)
     n--;
   }
   return i-x;
-   
+
 }
 
 double calcMean (vector<double> inputlist)
@@ -79,7 +79,7 @@ double calcStd(vector<double> inputlist)
     sum += (inputlist[i] - mean)*(inputlist[i] - mean);
   }
   double std = sum/(inputlist.size()-1);
-  
+
   std = sqrt(std);
 
   return std;
@@ -99,7 +99,7 @@ vector<double> conInterval(vector<double> inputlist)
   vector<double> myvector;
   myvector.push_back(c1);
   myvector.push_back(c2);
-  
+
   return myvector;
 }
 
@@ -134,7 +134,7 @@ void parseInputArguments(int argc, char * argv[])
   N = atoi(argv[7]);
   R = atoi(argv[8]);
   T = atoi(argv[9]);
-  
+
   for(int i =10; i < argc; i++)
   {
       seeds.push_back(stod(argv[i]));
@@ -148,12 +148,12 @@ void printInputArguments()
   // M A K F e B N R T seed1 seed2 seed3 seed4 seed5
 
   printf("%s %d %d %d %lf %d %d %d %d", M, A, K, F, e, B, N, R, T);
-  
+
   for(double i =0; i < seeds.size(); i++)
   {
       cout << seeds[i] << " ";
   }
-  
+
   cout << endl;
 }
 
@@ -166,9 +166,14 @@ void printArgumentError(int argc)
 
 int calculateLengthOfBlock(int F, int K)
 {
+  if (K == 0)
+  {
+    return 0;
+  }
+
 	int bitsPerBlock = F/K;
 	int r_bits = calcrbits(F/K);
-	
+
 	return bitsPerBlock + r_bits;
 }
 
@@ -176,46 +181,45 @@ int calculateLengthOfBlock(int F, int K)
 /*
 
   AVERAGED OVER 5 trail runs
-  
+
  calculate the average number of frame tx's
  = (total number of frame tx including re tx "this be F + retransmissions")/ (the number of frames correctly received)
-  
+
  */
 vector<double> avgFrameTx(vector<int> re_txRecord , vector<int> frame_ok_counts)
 {
   //assuming 5 trials
-  
+
   vector<double> avgFrameTxRecord;
-  
+
   for(int i =0; i<T; i++)
   {
     avgFrameTxRecord.push_back((frame_ok_counts[i] + re_txRecord[i])/frame_ok_counts[i]);
   }
-  
+
   return avgFrameTxRecord;
 }
 
 
 /*
   AVERAGED OVER 5 trail runs
-  
+
   Through = (F * the total number of correctly received frames)/(the total time required
   to correctly receive these frames)
-  
+
  */
 
-vector<double> calcThroughputVector(vector<int> clockRecordOfTrails, vector<int> frame_ok_countRecordOfTrails)
+vector<double> calcThroughputVector(int R, vector<int> frame_ok_countRecordOfTrails)
 {
   //Right now assuming total time is the clockRecord, and 5 trials
-  
+
   vector<double> throughputRecord;
-  
+
   for(int i=0; i<T; i++)
   {
-    throughputRecord.push_back((F* frame_ok_countRecordOfTrails[i]) /R); //clockRecordOfTrails[i]);
-    
+    throughputRecord.push_back((F* frame_ok_countRecordOfTrails[i])/R);
   }
-  
+
   return throughputRecord;
 }
 
@@ -227,82 +231,52 @@ vector<double> calcThroughputVector(vector<int> clockRecordOfTrails, vector<int>
 
 int main (int argc, char *argv[])
 {
-  
-  //Check the number of arguments 
+
+  //Check the number of arguments
   if (argc < 11)
   {
     printArgumentError(argc);
     return 1;
   }
-  
+
   parseInputArguments(argc, argv);
 
   printInputArguments();
-  
-  /*
-  vector<double> myvector(5);
-  myvector = {13,23,12,44,55};
-  //for (int i=0; i<2; i++) myvector[i]=i;
-  conInterval(myvector);
-  if (strcmp( argv[1], "I" ) == 0)
-  {
-    cout << "I mode" << endl;
-  }
-  else 
-  {
-    cout << "B mode" << endl;
-  }
-  */
 
-    /*
-    TO DO
-    
-    keep track of retransmissions?
-
-    include A(feedback time 50bit time units?)
-
-    5 trials
-   */
-
-  
   int num_of_blocks = K;
-  int length_of_block = calculateLengthOfBlock(F, K);
 
+
+  int length_of_block = calculateLengthOfBlock(F, K);
 
   //Store results
 
   vector <int> clockRecordOfTrails;
   vector <int> frame_ok_countRecordOfTrails;
   vector <int> re_txRecord;
-  
+
   //Run over T trials. Trails should equal 5.
   for (int z = 0; z < T; z++)
   {
-    srand(seeds[z]); 
-    
+    srand(seeds[z]);
+
     int re_tx;
-    int clock = 0;  
+    int clock = 0;
     int frame_ok_count = 0;
     //int num_of_blocks = K;
     //int length_of_block = calculateLengthOfBlock(F, K);
-  
+
     while(clock < R)
     {
       int tx_ok = 1;
-      
-      vector<int> blockErrors;
-      
-      //Check all blocks
-      for(int i = 0; i < num_of_blocks;i++)
+
+      if(K == 0)
       {
         int num_of_errors = 0;
 
-        //Check each bit of each block
-        for(int j = 0; j < length_of_block; j++)
+        for (int i =0; i < F; i++)
         {
-          if (strcmp(M, "I") ==0)
+          if (strcmp(M, "I") == 0)
           {
-            
             if(checkError(e))
             {
               num_of_errors++;
@@ -315,25 +289,62 @@ int main (int argc, char *argv[])
               num_of_errors++;
             }
           }
-          clock++;
         }
-  	
-        blockErrors.push_back(num_of_errors);
+
+        if (num_of_errors > 1)
+        {
+          tx_ok = 0;
+        }
+
       }
-      
+      else
+      {
+        vector<int> blockErrors;
+
+        //Check all blocks
+        for(int i = 0; i < num_of_blocks;i++)
+        {
+          int num_of_errors = 0;
+
+          //Check each bit of each block
+          for(int j = 0; j < length_of_block; j++)
+          {
+            if (strcmp(M, "I") ==0)
+            {
+
+              if(checkError(e))
+              {
+                num_of_errors++;
+              }
+            }
+            else
+            {
+              if (checkBurstError(N, B, e))
+              {
+                num_of_errors++;
+              }
+            }
+            clock++;
+          }
+
+          blockErrors.push_back(num_of_errors);
+        }
+
+        //Receiver check block errors
+        for(int i = 0; i < num_of_blocks; i++)
+        {
+          if(blockErrors[i] > 1)
+          {
+            tx_ok = 0;
+          }
+        }
+      }
+
       //Sender waits for receiver
       clock += A;
-      
-      //Receiver check block errors
-      for(int i = 0; i < num_of_blocks; i++)
-      {
-        if(blockErrors[i] > 1)
-        {
-          tx_ok = 0; 		
-        }
-  	
-      }
-      //Sender checks if frame tx successful, up frame_ok_count 
+
+
+      //Sender checks if frame tx successful, up frame_ok_count
       if(tx_ok){
 	   frame_ok_count++;
       }
@@ -341,26 +352,24 @@ int main (int argc, char *argv[])
       //and deal with retransmissions
       else{
         re_tx++;
-        
+
       }
-      
+
       //clock++;
     }
-    
 
-    clockRecordOfTrails.push_back(clock);
     frame_ok_countRecordOfTrails.push_back(frame_ok_count);
     re_txRecord.push_back(re_tx);
-    
+
   }
 
 
   //=========================================================================================================
   //For throughput
-  vector<double> tempThroughput = calcThroughputVector(clockRecordOfTrails, frame_ok_countRecordOfTrails);
+  vector<double> tempThroughput = calcThroughputVector(R, frame_ok_countRecordOfTrails);
 
   double temp_sum = 0;
-  
+
   for(int i =0; i<T; i++)
   {
     temp_sum += tempThroughput[i];
@@ -371,7 +380,7 @@ int main (int argc, char *argv[])
   vector<double> tempAvg = avgFrameTx(re_txRecord, frame_ok_countRecordOfTrails);
 
   double temp_sumAvg = 0;
-  
+
   for(int i =0; i<T; i++)
   {
     temp_sumAvg += tempAvg[i];
@@ -383,5 +392,5 @@ int main (int argc, char *argv[])
   cout << temp_sum/T << " (" << tempConfidenceInterval[0] << ", " << tempConfidenceInterval[1] << ") "<< endl;
 
   return 0;
-  
+
 }
