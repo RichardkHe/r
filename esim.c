@@ -231,6 +231,7 @@ int generateRandomError(int length_block, int *clock)
 {
   int num_of_errors = 0;
   //Check each bit of each block
+  
   for(int j = 0; j < length_block; j++)
   {
     if (strcmp(M, "I") ==0)
@@ -253,6 +254,53 @@ int generateRandomError(int length_block, int *clock)
   return num_of_errors;
 
 }
+
+//--------------------------------------------------------------------------------------------------------------------------------
+
+int GetNumberBurstOfErrors(int N, int B, int F, int * clock)
+{
+  int N_cpy = N;
+  int B_cpy = B;
+  bool isBurstPeriod = false;
+  
+  int NumErrors = 0;
+  
+  for(int i =0; i < F; i++)
+  {
+    if(isBurstPeriod)
+    {
+      B_cpy--;
+      if(B_cpy == 0)
+      {
+        isBurstPeriod = false;
+        B_cpy = B;
+      }
+      
+      if(checkBurstError(N, B, e))
+      {
+        NumErrors++;
+      }
+      cout <<"isBurstPeriod" << endl;
+    }
+    else
+    {
+      N_cpy--;
+      
+      if(N_cpy == 0)
+      {
+        isBurstPeriod = true;
+        N_cpy = N;
+      }
+    }
+    
+    (*clock)++;
+    
+  }
+  return NumErrors;
+}
+
+
+//--------------------------------------------------------------------------
 
 vector<int> generateBlockErrors(int num_of_blocks, int length_of_block, int *clock)
 {
@@ -383,12 +431,15 @@ int main (int argc, char *argv[])
   }
 
 
+  /*
   cout << "F:" << frames_transmitted[0] << "Re-Tran:" << re_txRecord[0] <<endl;
   cout << "F:" << frames_transmitted[1] << "Re-Tran:" << re_txRecord[1] <<endl;
   cout << "F:" << frames_transmitted[2] << "Re-Tran:" << re_txRecord[2] <<endl;
   cout << "F:" << frames_transmitted[3] << "Re-Tran:" << re_txRecord[3] <<endl;
   cout << "F:" << frames_transmitted[4] << "Re-Tran:" << re_txRecord[4] <<endl;
-
+  */
+  int i=0;
+  cout << GetNumberBurstOfErrors(9, 10, 10, &i) << endl;
 
   //=========================================================================================================
   //For throughput
