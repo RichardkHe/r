@@ -254,6 +254,35 @@ int generateRandomError(int length_block, int *clock)
 
 }
 
+vector<int> generateBlockErrors(int num_of_blocks, int length_of_block, int *clock)
+{
+  vector<int> blockErrors;
+  
+  for(int i = 0; i < num_of_blocks;i++)
+  {
+    int num_of_errors = generateRandomError(length_of_block, clock);
+    
+    blockErrors.push_back(num_of_errors);
+  }
+
+  return blockErrors;
+  
+}
+
+int checkBlockErrors(vector<int> blockErrors)
+{
+  for(double i = 0; i < blockErrors.size(); i++)
+  {
+    if(blockErrors[i] > 1)
+    {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+
+
 
 //=============================================================================================
 
@@ -295,23 +324,18 @@ int main (int argc, char *argv[])
       int tx_ok = 1;
 
       vector<int> blockErrors;
-      
+
       //Check all blocks
-      for(int i = 0; i < num_of_blocks;i++)
-      {
-        int num_of_errors = generateRandomError(length_of_block, &clock);
-        
-        blockErrors.push_back(num_of_errors);
-      }
-      
+      blockErrors = generateBlockErrors(num_of_blocks, length_of_block, &clock);
+
+
+      //wwewewew
       //Receiver check block errors
-      for(int i = 0; i < num_of_blocks; i++)
-        {
-          if(blockErrors[i] > 1)
-          {
-            tx_ok = 0;
-          }
-        }
+      tx_ok = (!checkBlockErrors(blockErrors));
+ 
+      //wwwwwww
+
+      
       //Sender waits for receiver
       clock += A;
 

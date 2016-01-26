@@ -31,26 +31,10 @@
 
 
 
-
-       //Check each bit of each block
-        for(int j = 0; j < length_of_block; j++)
+     for(int i = 0; i < num_of_blocks; i++)
+        {
+          if(blockErrors[i] > 1)
           {
-            if (strcmp(M, "I") ==0)
-            {
-              
-              if(checkError(e))
-              {
-                num_of_errors++;
-              }
-            }
-            else
-            {
-              if (checkBurstError(N, B, e))
-              {
-                num_of_errors++;
-              }
-            }
-            clock++;
+            tx_ok = 0;
           }
-
-
+        }
