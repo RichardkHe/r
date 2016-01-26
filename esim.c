@@ -318,6 +318,9 @@ int main (int argc, char *argv[])
     int re_tx =0;
     int clock = 0;
     int frame_ok_count = 0;
+
+    
+    
     
     while(clock < R)
     {
@@ -343,6 +346,12 @@ int main (int argc, char *argv[])
   }
 
 
+
+  cout << "F:" << frames_transmitted[0] << "Re-Tran:" << re_txRecord[0] <<endl;
+  cout << "F:" << frames_transmitted[1] << "Re-Tran:" << re_txRecord[1] <<endl;
+  cout << "F:" << frames_transmitted[2] << "Re-Tran:" << re_txRecord[2] <<endl;
+  cout << "F:" << frames_transmitted[3] << "Re-Tran:" << re_txRecord[3] <<endl;
+  cout << "F:" << frames_transmitted[4] << "Re-Tran:" << re_txRecord[4] <<endl;
 
 
   //=========================================================================================================
