@@ -345,49 +345,32 @@ int main (int argc, char *argv[])
 
       //Sender checks if frame tx successful, up frame_ok_count
       if(tx_ok){
-	   frame_ok_count++;
+	       frame_ok_count++;
       }
       //else we add additional A bit time for frames that were eventually received correctly
       //and deal with retransmissions
       else{
         re_tx++;
-
       }
 
       //clock++;
     }
     frames_transmitted.push_back(frame_ok_count);
     re_txRecord.push_back(re_tx);
-
   }
 
 
   //=========================================================================================================
   //For throughput
-  vector<double> tempThroughput = calcThroughputVector(R, frames_transmitted);
-
-  double temp_sum = 0;
-
-  for(int i =0; i<T; i++)
-  {
-    temp_sum += tempThroughput[i];
-  }
-  vector<double> tempConfidenceInterval = conInterval(tempThroughput);
+  vector<double> Throughput = calcThroughputVector(R, frames_transmitted);
+  vector<double> ThroughputConfidenceInterval = conInterval(Throughput);
   //=========================================================================================================
   //for average number of frame tx
-  vector<double> tempAvg = avgFrameTx(re_txRecord, frames_transmitted);
-
-  double temp_sumAvg = 0;
-
-  for(int i =0; i<T; i++)
-  {
-    temp_sumAvg += tempAvg[i];
-  }
-
-  vector<double> tempConfidenceInterval1 = conInterval(tempAvg);
+  vector<double> avgTxs = avgFrameTx(re_txRecord, frames_transmitted);
+  vector<double> avgTxConfidenceInterval = conInterval(avgTxs);
   //=========================================================================================================
-  cout << temp_sumAvg/T <<" (" << tempConfidenceInterval1[0] << ", " << tempConfidenceInterval1[1] << ") "<< endl;
-  cout << temp_sum/T << " (" << tempConfidenceInterval[0] << ", " << tempConfidenceInterval[1] << ") "<< endl;
+  cout << calcMean(avgTxs) <<" (" <<  avgTxConfidenceInterval[0] << ", " << avgTxConfidenceInterval[1] << ") "<< endl;
+  cout << calcMean(Throughput) <<" (" <<  ThroughputConfidenceInterval[0] << ", " << ThroughputConfidenceInterval[1] << ") "<< endl;
 
   return 0;
 
