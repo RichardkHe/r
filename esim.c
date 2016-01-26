@@ -321,29 +321,19 @@ int main (int argc, char *argv[])
     
     while(clock < R)
     {
-      int tx_ok = 1;
-
       vector<int> blockErrors;
 
       //Check all blocks
       blockErrors = generateBlockErrors(num_of_blocks, length_of_block, &clock);
-
-
-      //wwewewew
-      //Receiver check block errors
-      tx_ok = (!checkBlockErrors(blockErrors));
- 
-      //wwwwwww
-
       
       //Sender waits for receiver
       clock += A;
 
       //Sender checks if frame tx successful, up frame_ok_count
-      if(tx_ok){
+      //Receiver check block errors
+      if((!checkBlockErrors(blockErrors))){
         frame_ok_count++;
       }
-      //else we add additional A bit time for frames that were eventually received correctly and deal with tx
       else{
         re_tx++;
       }
