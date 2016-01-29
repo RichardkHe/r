@@ -150,7 +150,7 @@ void printInputArguments()
   //print out all command line arguments in the same line
   // M A K F e B N R T seed1 seed2 seed3 seed4 seed5
 
-  printf("%s %d %d %d %lf %d %d %d %d", M, A, K, F, e, B, N, R, T);
+  printf("%s %d %d %d %lf %d %d %d %d ", M, A, K, F, e, B, N, R, T);
 
   for(double i =0; i < seeds.size(); i++)
   {
@@ -238,11 +238,11 @@ int GetNumberBurstOfErrors(double N,double B,double length_block,double * clock)
 {
   //int N_cpy = N;
   //int B_cpy = B;
-  
+
   bool isBurstPeriod = false; //was false
-  
+
   double NumErrors = 0;
-  
+
   for(int i =0; i < length_block; i++)
   {
     if(isBurstPeriod)
@@ -253,7 +253,7 @@ int GetNumberBurstOfErrors(double N,double B,double length_block,double * clock)
         isBurstPeriod = false;
         B_cpy = B;
       }
-      
+
       if(checkBurstError(N, B, e))
       {
         NumErrors++;
@@ -262,7 +262,7 @@ int GetNumberBurstOfErrors(double N,double B,double length_block,double * clock)
     else
     {
       N_cpy--;
-      
+
       if(N_cpy <= 0)
       {
         isBurstPeriod = true;
@@ -270,9 +270,9 @@ int GetNumberBurstOfErrors(double N,double B,double length_block,double * clock)
       }
     }
     //cout << isBurstPeriod << endl;
-    
+
     (*clock)++;
-    
+
   }
   //cout << *clock << endl;
   //cout << NumErrors << endl;
@@ -294,13 +294,13 @@ int generateRandomError(int length_block,double *clock)
     //Independent model
     for(int j = 0; j < length_block; j++)
     {
-       
+
       if(checkError(e))
       {
         num_of_errors++;
       }
-      
-      
+
+
       (*clock)++;
     }
   }
@@ -321,16 +321,16 @@ int generateRandomError(int length_block,double *clock)
 vector<int> generateBlockErrors(int num_of_blocks,double length_of_block,double *clock)
 {
   vector<int> blockErrors;
-  
+
   for(int i = 0; i < num_of_blocks;i++)
   {
     double num_of_errors = generateRandomError(length_of_block, clock);
-    
+
     blockErrors.push_back(num_of_errors);
   }
 
   return blockErrors;
-  
+
 }
 
 int checkBlockErrors(vector<int> blockErrors)
@@ -368,7 +368,7 @@ int main (int argc, char *argv[])
 
   printInputArguments();
 
-  
+
   double num_of_blocks = K;
   double length_of_block = calculateLengthOfBlock(F, K);
 
@@ -387,11 +387,11 @@ int main (int argc, char *argv[])
       N_cpy = N;
       B_cpy = B;
       srand(seeds[z]);
-      
+
       double re_tx =0;
       double clock = 0;
       double frame_ok_count = 0;
-      
+
       while(clock < R)
       {
        double num_of_errors = generateRandomError(F, &clock);
@@ -403,7 +403,7 @@ int main (int argc, char *argv[])
         {
           frame_ok_count++;
         }
-        
+
         clock += A;
       }
       frames_transmitted.push_back(frame_ok_count);
@@ -421,21 +421,21 @@ int main (int argc, char *argv[])
       N_cpy = N;
       B_cpy = B;
       srand(seeds[z]);
-      
+
       double re_tx =0;
       double clock = 0;
       double frame_ok_count = 0;
-      
+
       while(clock < R)
       {
         vector<int> blockErrors;
-        
+
         //Check all blocks
         blockErrors = generateBlockErrors(num_of_blocks, length_of_block, &clock);
-        
+
         //Sender waits for receiver
         clock += A;
-        
+
         //Sender checks if frame tx successful, up frame_ok_count
         //Receiver check block errors
         if((!checkBlockErrors(blockErrors))){
@@ -460,7 +460,7 @@ int main (int argc, char *argv[])
   cout << "F:" << frames_transmitted[3] << "Re-Tran:" << re_txRecord[3] <<endl;
   cout << "F:" << frames_transmitted[4] << "Re-Tran:" << re_txRecord[4] <<endl;
   */
-  
+
   //int i=0;
   //cout << GetNumberBurstOfErrors(9, 10, 10, &i) << endl;
 
@@ -472,7 +472,7 @@ int main (int argc, char *argv[])
   vector<double> avgTxConfidenceInterval = conInterval(avgTxs);
 
   //=========================================================================================================
-  
+
   //For throughput
   vector<double> Throughput = calcThroughputVector(R, frames_transmitted);
   vector<double> ThroughputConfidenceInterval = conInterval(Throughput);
