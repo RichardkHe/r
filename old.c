@@ -380,7 +380,7 @@ int main (int argc, char *argv[])
 
 
   //=========================================================================================================
-  if(K == 0)
+  if((K == 0) && (strcmp(M, "I") ==0))
   {
     //Run over T trials. Trails should equal 5.
     for (int z = 0; z < T; z++)
