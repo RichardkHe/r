@@ -310,7 +310,7 @@ int generateRandomError(int length_block,double *clock)
     //cout << "Burst Model" << endl;
     num_of_errors = GetNumberBurstOfErrors(N, B, length_block, clock);
   }
-  cout << num_of_errors << endl;
+  //cout << num_of_errors << endl;
   return num_of_errors;
 
 }
