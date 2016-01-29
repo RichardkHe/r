@@ -355,8 +355,7 @@ int checkBlockErrors(vector<int> blockErrors)
 
 int main (int argc, char *argv[])
 {
-  N_cpy = N;
-  B_cpy = B;
+
 
   //Check the number of arguments
   if (argc < 11)
@@ -385,6 +384,8 @@ int main (int argc, char *argv[])
     //Run over T trials. Trails should equal 5.
     for (int z = 0; z < T; z++)
     {
+      N_cpy = N;
+      B_cpy = B;
       srand(seeds[z]);
       
       double re_tx =0;
@@ -417,6 +418,8 @@ int main (int argc, char *argv[])
     //Run over T trials. Trails should equal 5.
     for (int z = 0; z < T; z++)
     {
+      N_cpy = N;
+      B_cpy = B;
       srand(seeds[z]);
       
       double re_tx =0;
