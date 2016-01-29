@@ -440,7 +440,7 @@ int main (int argc, char *argv[])
         //Receiver check block errors
         if((!checkBlockErrors(blockErrors))){
           frame_ok_count++;
-          cout << frame_ok_count<< endl;
+          //cout << frame_ok_count<< endl;
         }
         else{
           re_tx++;
@@ -453,13 +453,13 @@ int main (int argc, char *argv[])
   }
 
 
-  
+  /*
   cout << "F:" << frames_transmitted[0] << "Re-Tran:" << re_txRecord[0] <<endl;
   cout << "F:" << frames_transmitted[1] << "Re-Tran:" << re_txRecord[1] <<endl;
   cout << "F:" << frames_transmitted[2] << "Re-Tran:" << re_txRecord[2] <<endl;
   cout << "F:" << frames_transmitted[3] << "Re-Tran:" << re_txRecord[3] <<endl;
   cout << "F:" << frames_transmitted[4] << "Re-Tran:" << re_txRecord[4] <<endl;
-  
+  */
   
   //int i=0;
   //cout << GetNumberBurstOfErrors(9, 10, 10, &i) << endl;
