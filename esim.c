@@ -234,7 +234,7 @@ vector<double> calcThroughputVector(int R, vector<double> frame_ok_countRecordOf
 
 //--------------------------------------------------------------------------------------------------------------------------------
 
-int GetNumberBurstOfErrors(double N,double B,double F,double * clock)
+int GetNumberBurstOfErrors(double N,double B,double length_block,double * clock)
 {
   //int N_cpy = N;
   //int B_cpy = B;
@@ -243,7 +243,7 @@ int GetNumberBurstOfErrors(double N,double B,double F,double * clock)
   
   double NumErrors = 0;
   
-  for(int i =0; i < F; i++)
+  for(int i =0; i < length_block; i++)
   {
     if(isBurstPeriod)
     {
@@ -275,7 +275,7 @@ int GetNumberBurstOfErrors(double N,double B,double F,double * clock)
     
   }
   //cout << *clock << endl;
-  cout << NumErrors << endl;
+  //cout << NumErrors << endl;
   return NumErrors;
 }
 
@@ -308,9 +308,9 @@ int generateRandomError(int length_block,double *clock)
   else //Burst model
   {
     //cout << "Burst Model" << endl;
-    num_of_errors = GetNumberBurstOfErrors(N, B, F, clock);
+    num_of_errors = GetNumberBurstOfErrors(N, B, length_block, clock);
   }
-  
+  cout << num_of_errors << endl;
   return num_of_errors;
 
 }
@@ -440,6 +440,7 @@ int main (int argc, char *argv[])
         //Receiver check block errors
         if((!checkBlockErrors(blockErrors))){
           frame_ok_count++;
+          cout << frame_ok_count<< endl;
         }
         else{
           re_tx++;
