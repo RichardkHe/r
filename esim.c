@@ -248,7 +248,7 @@ int GetNumberBurstOfErrors(double N,double B,double length_block,double * clock)
     if(isBurstPeriod)
     {
       B_cpy--;
-      if(B_cpy < 0)
+      if(B_cpy <= 0)
       {
         isBurstPeriod = false;
         B_cpy = B;
@@ -263,7 +263,7 @@ int GetNumberBurstOfErrors(double N,double B,double length_block,double * clock)
     {
       N_cpy--;
       
-      if(N_cpy < 0)
+      if(N_cpy <= 0)
       {
         isBurstPeriod = true;
         N_cpy = N;
