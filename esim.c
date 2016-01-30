@@ -29,7 +29,7 @@ int B;
 int N;
 int R;
 int T;
-vector<double> seeds;
+vector<int> seeds;
 
 int N_cpy;
 int B_cpy;
@@ -140,7 +140,7 @@ void parseInputArguments(int argc, char * argv[])
 
   for(int i =10; i < argc; i++)
   {
-      seeds.push_back(stod(argv[i]));
+      seeds.push_back(atoi(argv[i]));
   }
 }
 
