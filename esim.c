@@ -395,7 +395,7 @@ int main (int argc, char *argv[])
       while(clock < R)
       {
        double num_of_errors = generateRandomError(F, &clock);
-        if(num_of_errors > 1)
+        if(num_of_errors > 0)
         {
           re_tx++;
         }
