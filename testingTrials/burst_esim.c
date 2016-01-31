@@ -20,7 +20,7 @@ int isPowerOfTwo (unsigned int x)
 
 //-----------------------------
 //Global Commandline arguments
-char M[2] = "I";
+char M[2] = "B";
 int A =50;
 int K;
 int F = 4000;
@@ -313,7 +313,7 @@ int checkBlockErrors(vector<int> blockErrors)
 
 
 
-vector<double> oneTrival(int K, double e, int B, int N)
+double oneTrival(int K, double e, int B, int N)
 {
 
   double num_of_blocks = K;
@@ -428,32 +428,27 @@ vector<double> oneTrival(int K, double e, int B, int N)
   //cout << calcMean(Throughput) <<" (" <<  ThroughputConfidenceInterval[0] << ", " << ThroughputConfidenceInterval[1] << ") "<< endl;
   //cout << ""<< endl;
 
-  vector<double> results_vector;
-
-  results_vector.push_back(calcMean(avgTxs));
-  results_vector.push_back(avgTxConfidenceInterval[0]);
-  results_vector.push_back(avgTxConfidenceInterval[1]);
-  results_vector.push_back(calcMean(Throughput));
-  results_vector.push_back(ThroughputConfidenceInterval[0]);
-  results_vector.push_back(ThroughputConfidenceInterval[1]);
-  
-  
-  //Just throughput
-  return results_vector;
+  return calcMean(Throughput);
 }
 
 
 void printoutArray(string x, vector<double> vec)
 {
+  cout << x << " = [";
   for (unsigned int y=0; y< vec.size(); y++)
   {
+    if (y == (vec.size()-1))
     {
-      cout << vec[y] << "    ";
+      cout << vec[y];
+    }
+    else
+    {
+      cout << vec[y] << ", ";
     }
   }
+  cout << "]";
   cout <<""<<endl;
 }
-
 
 int main()
 {
@@ -479,42 +474,127 @@ int main()
   static const int arr3[] = {5000, 1000};
   vector<int> N_array (arr3, arr3 + sizeof(arr3) / sizeof(arr3[0]) );
 
-  //vector<double> printout_array;
-  //vector<double> printout_array1;
-
-  vector<double> printout_array_throughput;
-  vector<double> printout_array_avgtx;
-  vector<double> printout_array_avgtx1;
-  vector<double> printout_array_avgtx2;
-  vector<double> printout_array_throughput1;
-  vector<double> printout_array_throughput2;
+  vector<double> printout_array;
+  vector<double> printout_array1;
   
 
 //void oneTrival(int K, double e, int B, int N);
 //cout << oneTrival(0, 0.0001, 50, 5000) << endl;
 
 //-INDEPENDENT MODEL--------------------------------------------------------------------------------------------------
-
+  /*
   cout << "------------------------------------------------------------------------------------------"<<endl;
   cout << "independent Model, B=0, N=0"<< endl;
   for (unsigned int i =0; i < e_array.size(); i++)
   {
     cout << "================================================"<< endl;
     cout << "Error rate: " << e_array[i] << endl;
-    cout << "AVG_TX   AVG_TX_C1   AVG_TX_C2  THRPUT   THRPUT_C1   THRPUT_C2 "<<endl;
+
     for (unsigned int x=0; x < K_array.size(); x++)
     {
-      vector<double> results = oneTrival(K_array[x], e_array[i], 0, 0);
-      printoutArray("", results);
+
+      printout_array.push_back(oneTrival(K_array[x], e_array[i], 0, 0));
       
     }
     
+    printoutArray("Throughput", printout_array);
+    printout_array.clear();
 
     cout << "================================================"<< endl;
   }
   cout << "------------------------------------------------------------------------------------------"<<endl;
-
+  */
 //----------------------------------------------------------------------------------------------------
 
+
+//-Burst MODEL (N=5000,B=50) ----------------------------------------------------------------------------
+  
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+  cout << "Burst Model, N=5000,B=50 "<< endl;
+  for (unsigned int i =0; i < e_array.size(); i++)
+  {
+    cout << "================================================"<< endl;
+    cout << "Error rate: " << e_array[i] << endl;
+
+    for (unsigned int x=0; x < K_array.size(); x++)
+    {      
+      printout_array.push_back(oneTrival(K_array[x], e_array[i], 50, 5000));
+    }
+
+    printoutArray("Throughput", printout_array);
+    printout_array.clear();
+    
+    cout << "================================================"<< endl;
+  }
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+//-Burst MODEL (N=5000,B=50) ----------------------------------------------------------------------------
+  
+//-Burst MODEL (N=1000,B=50) ----------------------------------------------------------------------------
+  
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+  cout << "Burst Model, N=1000,B=50 "<< endl;
+  for (unsigned int i =0; i < e_array.size(); i++)
+  {
+    cout << "================================================"<< endl;
+    cout << "Error rate: " << e_array[i] << endl;
+
+    for (unsigned int x=0; x < K_array.size(); x++)
+    {      
+      printout_array.push_back(oneTrival(K_array[x], e_array[i], 50, 1000));
+    }
+
+    printoutArray("Throughput", printout_array);
+    printout_array.clear();
+    
+    cout << "================================================"<< endl;
+  }
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+//-Burst MODEL (N=1000,B=50) ----------------------------------------------------------------------------
+
+
+  //-Burst MODEL (N=5000,B=500) ----------------------------------------------------------------------------
+  
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+  cout << "Burst Model, N=5000,B=500 "<< endl;
+  for (unsigned int i =0; i < e_array.size(); i++)
+  {
+    cout << "================================================"<< endl;
+    cout << "Error rate: " << e_array[i] << endl;
+
+    for (unsigned int x=0; x < K_array.size(); x++)
+    {      
+      printout_array.push_back(oneTrival(K_array[x], e_array[i], 500, 5000));
+    }
+
+    printoutArray("Throughput", printout_array);
+    printout_array.clear();
+    
+    cout << "================================================"<< endl;
+  }
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+//-Burst MODEL (N=5000,B=500) ----------------------------------------------------------------------------
+
+
+  //-Burst MODEL (N=1000,B=500) ----------------------------------------------------------------------------
+  
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+  cout << "Burst Model, N=5000,B=500 "<< endl;
+  for (unsigned int i =0; i < e_array.size(); i++)
+  {
+    cout << "================================================"<< endl;
+    cout << "Error rate: " << e_array[i] << endl;
+
+    for (unsigned int x=0; x < K_array.size(); x++)
+    {      
+      printout_array.push_back(oneTrival(K_array[x], e_array[i], 500, 1000));
+    }
+
+    printoutArray("Throughput", printout_array);
+    printout_array.clear();
+    
+    cout << "================================================"<< endl;
+  }
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+//-Burst MODEL (N=1000,B=500) ----------------------------------------------------------------------------
   return 0;
 }

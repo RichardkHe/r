@@ -20,17 +20,16 @@ int isPowerOfTwo (unsigned int x)
 
 //-----------------------------
 //Global Commandline arguments
-char M[2] = "I";
-int A =50;
-int K;
+char M[2] =  "I";
+int A = 50;
+int K; //0,1,2,10,40,100,400,1000
 int F = 4000;
-//double e;
-//int B;
-//int N;
+double e; //0.0001, 0.0003, 0.005, 0.0007, 0.001
+int B = 0; //50, 500
+int N= 0; //5000 1000
 int R = 5000000;
 int T = 5;
 vector<int> seeds;
-
 int N_cpy;
 int B_cpy;
 //-----------------------------
@@ -134,10 +133,10 @@ int calculateLengthOfBlock(int F,double K)
     return 0;
   }
 
-	int bitsPerBlock = F/K;
-	int r_bits = calcrbits(F/K);
-
-	return bitsPerBlock + r_bits;
+  int bitsPerBlock = F/K;
+  int r_bits = calcrbits(F/K);
+  
+  return bitsPerBlock + r_bits;
 }
 
 //=============================================================================================
@@ -194,7 +193,7 @@ vector<double> calcThroughputVector(int R, vector<double> frame_ok_countRecordOf
 
 //--------------------------------------------------------------------------------------------------------------------------------
 
-int GetNumberBurstOfErrors(double N,double B,double length_block,double * clock, double e)
+int GetNumberBurstOfErrors(double N,double B,double length_block,double * clock)
 {
   //int N_cpy = N;
   //int B_cpy = B;
@@ -245,8 +244,10 @@ int GetNumberBurstOfErrors(double N,double B,double length_block,double * clock,
 //=============================================================================================
 
 
-int generateRandomError(int length_block,double *clock, int N, int B, double e)
+int generateRandomError(int length_block,double *clock, double e, int B, int N)
 {
+
+  
  double num_of_errors = 0;
   //Check each bit of each block
   if (strcmp(M, "I") ==0)
@@ -268,7 +269,7 @@ int generateRandomError(int length_block,double *clock, int N, int B, double e)
   else //Burst model
   {
     //cout << "Burst Model" << endl;
-    num_of_errors = GetNumberBurstOfErrors(N, B, length_block, clock, e);
+    num_of_errors = GetNumberBurstOfErrors(N, B, length_block, clock);
   }
   //cout << num_of_errors << endl;
   return num_of_errors;
@@ -277,14 +278,14 @@ int generateRandomError(int length_block,double *clock, int N, int B, double e)
 
 //=============================================================================================
 
-//generateRandomError(F, &clock, N, B)
-vector<int> generateBlockErrors(int num_of_blocks,double length_of_block,double *clock, int N, int B, double e)
+
+vector<int> generateBlockErrors(int num_of_blocks,double length_of_block,double *clock)
 {
   vector<int> blockErrors;
 
-  for(int i = 0; i < num_of_blocks;i++)
+  for(int i = 0; i < num_of_blocks;i++) //int generateRandomError(int length_block,double *clock, double e, int B, int N)
   {
-    double num_of_errors = generateRandomError(length_of_block, clock, N, B, e);
+    double num_of_errors = generateRandomError(length_of_block, clock, e, B, N);
 
     blockErrors.push_back(num_of_errors);
   }
@@ -312,10 +313,17 @@ int checkBlockErrors(vector<int> blockErrors)
 //=============================================================================================
 
 
+/*
+
+int K; //0,1,2,10,40,100,400,1000
+
+double e; //0.001, 0.0003, 0.005, 0.0007, 0.001
+int B; //50, 500
+int N; //5000 1000
+ */
 
 vector<double> oneTrival(int K, double e, int B, int N)
 {
-
   double num_of_blocks = K;
   double length_of_block = calculateLengthOfBlock(F, K);
 
@@ -339,9 +347,9 @@ vector<double> oneTrival(int K, double e, int B, int N)
       double clock = 0;
       double frame_ok_count = 0;
 
-      while(clock < R)
+      while(clock < R) //int generateRandomError(int length_block,double *clock, double e, int B, int N)
       {
-        double num_of_errors = generateRandomError(F, &clock, N, B, e);
+        double num_of_errors = generateRandomError(F, &clock, e, B, N);
         if(num_of_errors > 1)
         {
           re_tx++;
@@ -378,7 +386,7 @@ vector<double> oneTrival(int K, double e, int B, int N)
         vector<int> blockErrors;
 
         //Check all blocks
-        blockErrors = generateBlockErrors(num_of_blocks, length_of_block, &clock, N, B, e);
+        blockErrors = generateBlockErrors(num_of_blocks, length_of_block, &clock);
 
         //Sender waits for receiver
         clock += A;
@@ -399,20 +407,6 @@ vector<double> oneTrival(int K, double e, int B, int N)
   //=========================================================================================================
   }
 
-
-  /*
-  cout << "F:" << frames_transmitted[0] << "Re-Tran:" << re_txRecord[0] <<endl;
-  cout << "F:" << frames_transmitted[1] << "Re-Tran:" << re_txRecord[1] <<endl;
-  cout << "F:" << frames_transmitted[2] << "Re-Tran:" << re_txRecord[2] <<endl;
-  cout << "F:" << frames_transmitted[3] << "Re-Tran:" << re_txRecord[3] <<endl;
-  cout << "F:" << frames_transmitted[4] << "Re-Tran:" << re_txRecord[4] <<endl;
-  */
-
-  //int i=0;
-  //cout << GetNumberBurstOfErrors(9, 10, 10, &i) << endl;
-
-
-
   //=========================================================================================================
   //for average number of frame tx
   vector<double> avgTxs = avgFrameTx(re_txRecord, frames_transmitted);
@@ -424,11 +418,16 @@ vector<double> oneTrival(int K, double e, int B, int N)
   vector<double> Throughput = calcThroughputVector(R, frames_transmitted);
   vector<double> ThroughputConfidenceInterval = conInterval(Throughput);
   //=========================================================================================================
-  //cout << calcMean(avgTxs) <<" (" <<  avgTxConfidenceInterval[0] << ", " << avgTxConfidenceInterval[1] << ") "<< endl;
-  //cout << calcMean(Throughput) <<" (" <<  ThroughputConfidenceInterval[0] << ", " << ThroughputConfidenceInterval[1] << ") "<< endl;
-  //cout << ""<< endl;
 
-  vector<double> results_vector;
+  /*
+  //Normal output
+  cout << calcMean(avgTxs) <<" (" <<  avgTxConfidenceInterval[0] << ", " << avgTxConfidenceInterval[1] << ") "<< endl;
+  cout << calcMean(Throughput) <<" (" <<  ThroughputConfidenceInterval[0] << ", " << ThroughputConfidenceInterval[1] << ") "<< endl;
+  cout << ""<< endl;
+  */
+
+
+  vector<doube> results_vector;
 
   results_vector.push_back(calcMean(avgTxs));
   results_vector.push_back(avgTxConfidenceInterval[0]);
@@ -442,15 +441,21 @@ vector<double> oneTrival(int K, double e, int B, int N)
   return results_vector;
 }
 
-
 void printoutArray(string x, vector<double> vec)
 {
+  cout << x << " = [";
   for (unsigned int y=0; y< vec.size(); y++)
   {
+    if (y == (vec.size()-1))
     {
-      cout << vec[y] << "    ";
+      cout << vec[y];
+    }
+    else
+    {
+      cout << vec[y] << ", ";
     }
   }
+  cout << "]";
   cout <<""<<endl;
 }
 
@@ -458,11 +463,11 @@ void printoutArray(string x, vector<double> vec)
 int main()
 {
 
-  seeds.push_back(1534546);
-  seeds.push_back(2133323);
-  seeds.push_back(377);
-  seeds.push_back(456548);
-  seeds.push_back(59998);
+  seeds.push_back(1);
+  seeds.push_back(2);
+  seeds.push_back(3);
+  seeds.push_back(4);
+  seeds.push_back(5);
 
   //static const int arr[] = {16,2,77,29};
   //vector<int> vec (arr, arr + sizeof(arr) / sizeof(arr[0]) );
@@ -479,9 +484,6 @@ int main()
   static const int arr3[] = {5000, 1000};
   vector<int> N_array (arr3, arr3 + sizeof(arr3) / sizeof(arr3[0]) );
 
-  //vector<double> printout_array;
-  //vector<double> printout_array1;
-
   vector<double> printout_array_throughput;
   vector<double> printout_array_avgtx;
   vector<double> printout_array_avgtx1;
@@ -491,29 +493,38 @@ int main()
   
 
 //void oneTrival(int K, double e, int B, int N);
-//cout << oneTrival(0, 0.0001, 50, 5000) << endl;
+//oneTrival(0, 0.0001, 0, 0);
+
 
 //-INDEPENDENT MODEL--------------------------------------------------------------------------------------------------
-
   cout << "------------------------------------------------------------------------------------------"<<endl;
   cout << "independent Model, B=0, N=0"<< endl;
   for (unsigned int i =0; i < e_array.size(); i++)
   {
     cout << "================================================"<< endl;
     cout << "Error rate: " << e_array[i] << endl;
-    cout << "AVG_TX   AVG_TX_C1   AVG_TX_C2  THRPUT   THRPUT_C1   THRPUT_C2 "<<endl;
+
     for (unsigned int x=0; x < K_array.size(); x++)
     {
-      vector<double> results = oneTrival(K_array[x], e_array[i], 0, 0);
-      printoutArray("", results);
-      
-    }
-    
 
+      vector<double> results = oneTrival(K_array[x], e_array[i], 0, 0);
+      
+      printout_array_avgtx.push_back(results[0]);
+      printout_array_avgtx1.push_back(results[1]);
+      printout_array_avgtx2.push_back(results[2]);
+      printout_array_throughput.push_back(results[3]);
+      printout_array_throughput1.push_back(results[4]);
+      printout_array_throughput2.push_back(results[5]);
+    }
+
+    printoutArray("avgtx", printout_array_avgtx);
+    printout_array_avgtx.clear();
+
+                                           
+    
     cout << "================================================"<< endl;
   }
   cout << "------------------------------------------------------------------------------------------"<<endl;
-
 //----------------------------------------------------------------------------------------------------
 
   return 0;
