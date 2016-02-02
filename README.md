@@ -3,6 +3,10 @@ CMPUT 313, Assignment 1, Winter 2016  (worth 9%)
 A Study of a Combined Error Detection and Error Correction Scheme
 Due Tuesday Feb 2, 5pm 
 
+We use the following function to check if power of 2:
+
+//http://www.exploringbinary.com/ten-ways-to-check-if-an-integer-is-a-power-of-two-in-c/
+
 We going use only 5 trials, T = 5 , t[0.975;4] = 2.776 and 5% confidence interval
 For our analysis we will use the following constants:
 A(feedback bit time)  = 50
