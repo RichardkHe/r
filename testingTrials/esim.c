@@ -20,7 +20,7 @@ int isPowerOfTwo (unsigned int x)
 
 //-----------------------------
 //Global Commandline arguments
-char M[2] = "I";
+char M[2] = "B";
 int A =50;
 int K;
 int F = 4000;
@@ -297,7 +297,7 @@ int checkBlockErrors(vector<int> blockErrors)
 {
   for(double i = 0; i < blockErrors.size(); i++)
   {
-    if(blockErrors[i] > 1) //was 1
+    if(blockErrors[i] > 1)
     {
       return 1;
     }
@@ -342,7 +342,7 @@ vector<double> oneTrival(int K, double e, int B, int N)
       while(clock < R)
       {
         double num_of_errors = generateRandomError(F, &clock, N, B, e);
-        if(num_of_errors > 0)
+        if(num_of_errors > 1)
         {
           re_tx++;
         }
@@ -458,11 +458,11 @@ void printoutArray(string x, vector<double> vec)
 int main()
 {
 
-  seeds.push_back(1534546);
-  seeds.push_back(2133323);
-  seeds.push_back(377);
-  seeds.push_back(456548);
-  seeds.push_back(59998);
+  seeds.push_back(1);
+  seeds.push_back(2);
+  seeds.push_back(3);
+  seeds.push_back(4);
+  seeds.push_back(5);
 
   //static const int arr[] = {16,2,77,29};
   //vector<int> vec (arr, arr + sizeof(arr) / sizeof(arr[0]) );
@@ -491,30 +491,134 @@ int main()
   
 
 //void oneTrival(int K, double e, int B, int N);
-//cout << oneTrival(0, 0.0001, 50, 5000) << endl;
+  //cout << oneTrival(0, 0.0005, 50, 5000) << endl;
 
+  //printoutArray("",oneTrival(0, 0.0005, 50, 5000));
+  
 //-INDEPENDENT MODEL--------------------------------------------------------------------------------------------------
-
+  /*
   cout << "------------------------------------------------------------------------------------------"<<endl;
   cout << "independent Model, B=0, N=0"<< endl;
   for (unsigned int i =0; i < e_array.size(); i++)
   {
     cout << "================================================"<< endl;
     cout << "Error rate: " << e_array[i] << endl;
-    cout << "AVG_TX   AVG_TX_C1   AVG_TX_C2  THRPUT   THRPUT_C1   THRPUT_C2 "<<endl;
+
     for (unsigned int x=0; x < K_array.size(); x++)
     {
-      vector<double> results = oneTrival(K_array[x], e_array[i], 0, 0);
-      printoutArray("", results);
+
+      printout_array.push_back(oneTrival(K_array[x], e_array[i], 0, 0));
       
     }
     
+    printoutArray("Throughput", printout_array);
+    printout_array.clear();
 
     cout << "================================================"<< endl;
   }
   cout << "------------------------------------------------------------------------------------------"<<endl;
-
+  */
 //----------------------------------------------------------------------------------------------------
+
+
+//-Burst MODEL (N=5000,B=50) ----------------------------------------------------------------------------
+  
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+  cout << "Burst Model, N=5000,B=50 "<< endl;
+  for (unsigned int i =0; i < e_array.size(); i++)
+  {
+    cout << "================================================"<< endl;
+    cout << "Error rate: " << e_array[i] << endl;
+
+    
+    cout << "AVG_TX   AVG_TX_C1   AVG_TX_C2  THRPUT   THRPUT_C1   THRPUT_C2 "<<endl;
+    for (unsigned int x=0; x < K_array.size(); x++)
+    {
+      vector<double> results = oneTrival(K_array[x], e_array[i], 50, 5000);
+
+      printoutArray("", results);
+         
+    }
+   
+    cout << "================================================"<< endl;
+  }
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+//-Burst MODEL (N=5000,B=50) ----------------------------------------------------------------------------
+
+
+  //-Burst MODEL (N=1000,B=50) ----------------------------------------------------------------------------
+  
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+  cout << "Burst Model, N=1000,B=50 "<< endl;
+  for (unsigned int i =0; i < e_array.size(); i++)
+  {
+    cout << "================================================"<< endl;
+    cout << "Error rate: " << e_array[i] << endl;
+
+    
+    cout << "AVG_TX   AVG_TX_C1   AVG_TX_C2  THRPUT   THRPUT_C1   THRPUT_C2 "<<endl;
+    for (unsigned int x=0; x < K_array.size(); x++)
+    {
+      vector<double> results = oneTrival(K_array[x], e_array[i], 50, 1000);
+
+      printoutArray("", results);
+         
+    }
+   
+    cout << "================================================"<< endl;
+  }
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+//-Burst MODEL (N=1000,B=50) ----------------------------------------------------------------------------
+
+
+  //-Burst MODEL (N=5000,B=500) ----------------------------------------------------------------------------
+  
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+  cout << "Burst Model, N=5000,B=500 "<< endl;
+  for (unsigned int i =0; i < e_array.size(); i++)
+  {
+    cout << "================================================"<< endl;
+    cout << "Error rate: " << e_array[i] << endl;
+
+    
+    cout << "AVG_TX   AVG_TX_C1   AVG_TX_C2  THRPUT   THRPUT_C1   THRPUT_C2 "<<endl;
+    for (unsigned int x=0; x < K_array.size(); x++)
+    {
+      vector<double> results = oneTrival(K_array[x], e_array[i], 500, 5000);
+
+      printoutArray("", results);
+         
+    }
+   
+    cout << "================================================"<< endl;
+  }
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+//-Burst MODEL (N=5000,B=500) ----------------------------------------------------------------------------
+
+
+  //-Burst MODEL (N=1000,B=500) ----------------------------------------------------------------------------
+  
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+  cout << "Burst Model, N=5000,B=50 "<< endl;
+  for (unsigned int i =0; i < e_array.size(); i++)
+  {
+    cout << "================================================"<< endl;
+    cout << "Error rate: " << e_array[i] << endl;
+
+    
+    cout << "AVG_TX   AVG_TX_C1   AVG_TX_C2  THRPUT   THRPUT_C1   THRPUT_C2 "<<endl;
+    for (unsigned int x=0; x < K_array.size(); x++)
+    {
+      vector<double> results = oneTrival(K_array[x], e_array[i], 500, 1000);
+
+      printoutArray("", results);
+         
+    }
+   
+    cout << "================================================"<< endl;
+  }
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+//-Burst MODEL (N=1000,B=500) ----------------------------------------------------------------------------
 
   return 0;
 }
