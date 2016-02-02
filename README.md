@@ -14,10 +14,13 @@ R(simulation bit time) = 5,000,000
 F(frame size) = 4000
 T(Trials) = 5 with seeds ["1534546", "2133323" ,"377" ,"456548" ,"59998"] 
 
+
 For our simulation use the Makefile and esim.c in main directory. Run make, and run for example
 n the commandline:
 
-./esim B 50 40 8000 0.0005 50 5000 5000000 5 1534546 2133323 377 456548 59998
+./esim I 50 0 4000 0.0001 0 0 5000000 5 153456 2133323 377 456548 59998
+
+
 
 The parameters are to be input as command line arguments:
 
@@ -38,6 +41,8 @@ The parameters are to be input as command line arguments:
 · R (integer)   The length of the simulation in bit time units.   You must run this long enough to obtain stable results (for reasonable error rates).  This should be run on the order of 5,000,000 bit time units.
 
 · T  t1 t2 t3 ... tT (integer)   The number of trials, followed by seeds for the trials.  For this simulation, you can set T to 5.
+
+
 
 The output of the program:
 

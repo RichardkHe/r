@@ -20,18 +20,19 @@ int isPowerOfTwo (unsigned int x)
 
 //-----------------------------
 //Global Commandline arguments
-char M[2] =  "B";
-int A = 50;
-//int K; //0,1,2,10,40,100,400,1000
+char M[2] = "B";
+int A =50;
+int K;
 int F = 4000;
-double e; //0.0001, 0.0003, 0.005, 0.0007, 0.001
-//int B = 50; //50, 500
-//int N= 5000; //5000 1000
+//double e;
+//int B;
+//int N;
 int R = 5000000;
 int T = 5;
 vector<int> seeds;
-//int N_cpy;
-//int B_cpy;
+
+int N_cpy;
+int B_cpy;
 //-----------------------------
 
 int isPowerOfTwo (unsigned int x)
@@ -133,10 +134,10 @@ int calculateLengthOfBlock(int F,double K)
     return 0;
   }
 
-  int bitsPerBlock = F/K;
-  int r_bits = calcrbits(F/K);
-  
-  return bitsPerBlock + r_bits;
+	int bitsPerBlock = F/K;
+	int r_bits = calcrbits(F/K);
+
+	return bitsPerBlock + r_bits;
 }
 
 //=============================================================================================
@@ -193,13 +194,11 @@ vector<double> calcThroughputVector(int R, vector<double> frame_ok_countRecordOf
 
 //--------------------------------------------------------------------------------------------------------------------------------
 
-int GetNumberBurstOfErrors(double N,double B,double length_block,double * clock)
+int GetNumberBurstOfErrors(double N,double B,double length_block,double * clock, double e)
 {
-  cout << "B :" <<B << endl;
-  cout << "N :" << N<<endl;
+  //int N_cpy = N;
+  //int B_cpy = B;
 
-  int B_cpy;
-  int N_cpy;
   bool isBurstPeriod = false; //was false
 
   double NumErrors = 0;
@@ -246,15 +245,12 @@ int GetNumberBurstOfErrors(double N,double B,double length_block,double * clock)
 //=============================================================================================
 
 
-int generateRandomError(int length_block,double *clock, double e, int B, int N)
+int generateRandomError(int length_block,double *clock, int N, int B, double e)
 {
-
-  
  double num_of_errors = 0;
   //Check each bit of each block
   if (strcmp(M, "I") ==0)
   {
-    cout << "indepedent" << endl;
     //Independent model
     for(int j = 0; j < length_block; j++)
     {
@@ -272,7 +268,7 @@ int generateRandomError(int length_block,double *clock, double e, int B, int N)
   else //Burst model
   {
     //cout << "Burst Model" << endl;
-    num_of_errors = GetNumberBurstOfErrors(N, B, length_block, clock);
+    num_of_errors = GetNumberBurstOfErrors(N, B, length_block, clock, e);
   }
   //cout << num_of_errors << endl;
   return num_of_errors;
@@ -281,14 +277,14 @@ int generateRandomError(int length_block,double *clock, double e, int B, int N)
 
 //=============================================================================================
 
-
-vector<int> generateBlockErrors(int num_of_blocks,double length_of_block,double *clock, double e, int B, int N)
+//generateRandomError(F, &clock, N, B)
+vector<int> generateBlockErrors(int num_of_blocks,double length_of_block,double *clock, int N, int B, double e)
 {
   vector<int> blockErrors;
 
-  for(int i = 0; i < num_of_blocks;i++) //int generateRandomError(int length_block,double *clock, double e, int B, int N)
+  for(int i = 0; i < num_of_blocks;i++)
   {
-    double num_of_errors = generateRandomError(length_of_block, clock, e, B, N);
+    double num_of_errors = generateRandomError(length_of_block, clock, N, B, e);
 
     blockErrors.push_back(num_of_errors);
   }
@@ -316,17 +312,10 @@ int checkBlockErrors(vector<int> blockErrors)
 //=============================================================================================
 
 
-/*
 
-int K; //0,1,2,10,40,100,400,1000
-
-double e; //0.001, 0.0003, 0.005, 0.0007, 0.001
-int B; //50, 500
-int N; //5000 1000
- */
-
-double oneTrival(int K, double e, int B, int N)
+vector<double> oneTrival(int K, double e, int B, int N)
 {
+
   double num_of_blocks = K;
   double length_of_block = calculateLengthOfBlock(F, K);
 
@@ -350,10 +339,10 @@ double oneTrival(int K, double e, int B, int N)
       double clock = 0;
       double frame_ok_count = 0;
 
-      while(clock < R) //int generateRandomError(int length_block,double *clock, double e, int B, int N)
+      while(clock < R)
       {
-        double num_of_errors = generateRandomError(F, &clock, e, B, N);
-        if(num_of_errors > 1)
+        double num_of_errors = generateRandomError(F, &clock, N, B, e);
+        if(num_of_errors > 0)
         {
           re_tx++;
         }
@@ -388,9 +377,8 @@ double oneTrival(int K, double e, int B, int N)
       {
         vector<int> blockErrors;
 
-        //vector<int> generateBlockErrors(int num_of_blocks,double length_of_block,double *clock, double e, int B, int N)
-        //Check all blocks 
-        blockErrors = generateBlockErrors(num_of_blocks, length_of_block, &clock, e, B, N);
+        //Check all blocks
+        blockErrors = generateBlockErrors(num_of_blocks, length_of_block, &clock, N, B, e);
 
         //Sender waits for receiver
         clock += A;
@@ -411,6 +399,20 @@ double oneTrival(int K, double e, int B, int N)
   //=========================================================================================================
   }
 
+
+  /*
+  cout << "F:" << frames_transmitted[0] << "Re-Tran:" << re_txRecord[0] <<endl;
+  cout << "F:" << frames_transmitted[1] << "Re-Tran:" << re_txRecord[1] <<endl;
+  cout << "F:" << frames_transmitted[2] << "Re-Tran:" << re_txRecord[2] <<endl;
+  cout << "F:" << frames_transmitted[3] << "Re-Tran:" << re_txRecord[3] <<endl;
+  cout << "F:" << frames_transmitted[4] << "Re-Tran:" << re_txRecord[4] <<endl;
+  */
+
+  //int i=0;
+  //cout << GetNumberBurstOfErrors(9, 10, 10, &i) << endl;
+
+
+
   //=========================================================================================================
   //for average number of frame tx
   vector<double> avgTxs = avgFrameTx(re_txRecord, frames_transmitted);
@@ -422,50 +424,45 @@ double oneTrival(int K, double e, int B, int N)
   vector<double> Throughput = calcThroughputVector(R, frames_transmitted);
   vector<double> ThroughputConfidenceInterval = conInterval(Throughput);
   //=========================================================================================================
+  //cout << calcMean(avgTxs) <<" (" <<  avgTxConfidenceInterval[0] << ", " << avgTxConfidenceInterval[1] << ") "<< endl;
+  //cout << calcMean(Throughput) <<" (" <<  ThroughputConfidenceInterval[0] << ", " << ThroughputConfidenceInterval[1] << ") "<< endl;
+  //cout << ""<< endl;
 
-  /*
-  //Normal output
-  cout << calcMean(avgTxs) <<" (" <<  avgTxConfidenceInterval[0] << ", " << avgTxConfidenceInterval[1] << ") "<< endl;
-  cout << calcMean(Throughput) <<" (" <<  ThroughputConfidenceInterval[0] << ", " << ThroughputConfidenceInterval[1] << ") "<< endl;
-  cout << ""<< endl;
-  */
+  vector<double> results_vector;
 
-  /*
-  vector<doube> results_vector;
-
-  results_vector.append(calcMean(avgTxs));
-  */
+  results_vector.push_back(calcMean(avgTxs));
+  results_vector.push_back(avgTxConfidenceInterval[0]);
+  results_vector.push_back(avgTxConfidenceInterval[1]);
+  results_vector.push_back(calcMean(Throughput));
+  results_vector.push_back(ThroughputConfidenceInterval[0]);
+  results_vector.push_back(ThroughputConfidenceInterval[1]);
+  
   
   //Just throughput
-  return calcMean(Throughput);
+  return results_vector;
 }
+
 
 void printoutArray(string x, vector<double> vec)
 {
-  cout << x << " = [";
   for (unsigned int y=0; y< vec.size(); y++)
   {
-    if (y == (vec.size()-1))
     {
-      cout << vec[y];
-    }
-    else
-    {
-      cout << vec[y] << ", ";
+      cout << vec[y] << "    ";
     }
   }
-  cout << "]";
   cout <<""<<endl;
 }
+
 
 int main()
 {
 
-  seeds.push_back(1534546);
-  seeds.push_back(2133323);
-  seeds.push_back(377);
-  seeds.push_back(456548);
-  seeds.push_back(59998);
+  seeds.push_back(1);
+  seeds.push_back(2);
+  seeds.push_back(3);
+  seeds.push_back(4);
+  seeds.push_back(5);
 
   //static const int arr[] = {16,2,77,29};
   //vector<int> vec (arr, arr + sizeof(arr) / sizeof(arr[0]) );
@@ -482,13 +479,22 @@ int main()
   static const int arr3[] = {5000, 1000};
   vector<int> N_array (arr3, arr3 + sizeof(arr3) / sizeof(arr3[0]) );
 
-  vector<double> printout_array;
-  vector<double> printout_array1;
+  //vector<double> printout_array;
+  //vector<double> printout_array1;
+
+  vector<double> printout_array_throughput;
+  vector<double> printout_array_avgtx;
+  vector<double> printout_array_avgtx1;
+  vector<double> printout_array_avgtx2;
+  vector<double> printout_array_throughput1;
+  vector<double> printout_array_throughput2;
   
 
 //void oneTrival(int K, double e, int B, int N);
-  cout << oneTrival(0, 0.0001, 50, 5000) << endl;
+  //cout << oneTrival(0, 0.0005, 50, 5000) << endl;
 
+  //printoutArray("",oneTrival(0, 0.0005, 50, 5000));
+  
 //-INDEPENDENT MODEL--------------------------------------------------------------------------------------------------
   /*
   cout << "------------------------------------------------------------------------------------------"<<endl;
@@ -515,10 +521,8 @@ int main()
 //----------------------------------------------------------------------------------------------------
 
 
-//-Burst MODEL (N=5000,B=50) -------------------------------------------------------------------------------------------------
-
-
-  /*
+//-Burst MODEL (N=5000,B=50) ----------------------------------------------------------------------------
+  
   cout << "------------------------------------------------------------------------------------------"<<endl;
   cout << "Burst Model, N=5000,B=50 "<< endl;
   for (unsigned int i =0; i < e_array.size(); i++)
@@ -526,19 +530,95 @@ int main()
     cout << "================================================"<< endl;
     cout << "Error rate: " << e_array[i] << endl;
 
-    for (unsigned int x=0; x < K_array.size(); x++)
-    {      
-      printout_array.push_back(oneTrival(K_array[x], e_array[i], 50, 5000));
-    }
-
-    printoutArray("Throughput", printout_array);
-    printout_array.clear();
     
+    cout << "AVG_TX   AVG_TX_C1   AVG_TX_C2  THRPUT   THRPUT_C1   THRPUT_C2 "<<endl;
+    for (unsigned int x=0; x < K_array.size(); x++)
+    {
+      vector<double> results = oneTrival(K_array[x], e_array[i], 50, 5000);
+
+      printoutArray("", results);
+         
+    }
+   
     cout << "================================================"<< endl;
   }
   cout << "------------------------------------------------------------------------------------------"<<endl;
+//-Burst MODEL (N=5000,B=50) ----------------------------------------------------------------------------
 
-  */
+
+  //-Burst MODEL (N=1000,B=50) ----------------------------------------------------------------------------
+  
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+  cout << "Burst Model, N=1000,B=50 "<< endl;
+  for (unsigned int i =0; i < e_array.size(); i++)
+  {
+    cout << "================================================"<< endl;
+    cout << "Error rate: " << e_array[i] << endl;
+
+    
+    cout << "AVG_TX   AVG_TX_C1   AVG_TX_C2  THRPUT   THRPUT_C1   THRPUT_C2 "<<endl;
+    for (unsigned int x=0; x < K_array.size(); x++)
+    {
+      vector<double> results = oneTrival(K_array[x], e_array[i], 50, 1000);
+
+      printoutArray("", results);
+         
+    }
+   
+    cout << "================================================"<< endl;
+  }
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+//-Burst MODEL (N=1000,B=50) ----------------------------------------------------------------------------
+
+
+  //-Burst MODEL (N=5000,B=500) ----------------------------------------------------------------------------
+  
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+  cout << "Burst Model, N=5000,B=500 "<< endl;
+  for (unsigned int i =0; i < e_array.size(); i++)
+  {
+    cout << "================================================"<< endl;
+    cout << "Error rate: " << e_array[i] << endl;
+
+    
+    cout << "AVG_TX   AVG_TX_C1   AVG_TX_C2  THRPUT   THRPUT_C1   THRPUT_C2 "<<endl;
+    for (unsigned int x=0; x < K_array.size(); x++)
+    {
+      vector<double> results = oneTrival(K_array[x], e_array[i], 500, 5000);
+
+      printoutArray("", results);
+         
+    }
+   
+    cout << "================================================"<< endl;
+  }
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+//-Burst MODEL (N=5000,B=500) ----------------------------------------------------------------------------
+
+
+  //-Burst MODEL (N=1000,B=500) ----------------------------------------------------------------------------
+  
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+  cout << "Burst Model, N=5000,B=50 "<< endl;
+  for (unsigned int i =0; i < e_array.size(); i++)
+  {
+    cout << "================================================"<< endl;
+    cout << "Error rate: " << e_array[i] << endl;
+
+    
+    cout << "AVG_TX   AVG_TX_C1   AVG_TX_C2  THRPUT   THRPUT_C1   THRPUT_C2 "<<endl;
+    for (unsigned int x=0; x < K_array.size(); x++)
+    {
+      vector<double> results = oneTrival(K_array[x], e_array[i], 500, 1000);
+
+      printoutArray("", results);
+         
+    }
+   
+    cout << "================================================"<< endl;
+  }
+  cout << "------------------------------------------------------------------------------------------"<<endl;
+//-Burst MODEL (N=1000,B=500) ----------------------------------------------------------------------------
 
   return 0;
 }
