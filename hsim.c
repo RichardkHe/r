@@ -147,6 +147,23 @@ bool elementInList(vector <int> list, int item)
 }
 
 
+int findMinIndex(vector <int> list)
+{
+  int min_value = 999999999;
+  int min_index = 0;
+  
+  for(unsigned int i =0; i< list.size() ; i++)
+  {
+    if (list[i] <= min_value)
+    {
+      min_value = list[i];
+      min_index = i;
+    }
+    
+  }
+  return min_index;
+}
+
 vector< int  > shortPath (int source, vector< vector<int> > neighbours)
 {
   
@@ -159,9 +176,16 @@ vector< int  > shortPath (int source, vector< vector<int> > neighbours)
       distance[i]= 1;
       
     }
+    else
+    {
+      distance[i] = 9999;
+    }
   }
+  
+  int minhal = findMinIndex(distance);
 
-  printoutArray("", distance);
+  cout << minhal << endl;
+  //printoutArray("", distance);
 
   
   return distance;
@@ -234,8 +258,11 @@ int main (int argc, char *argv[])
   printOutPut("Hot Potato II", 2.3, 3.4);
   //--PRINT OUT STUFF----------------------------------------------------------------------------------
   */
-  shortPath (0, neighbours);
 
+  shortPath (1, neighbours);
+  //vector <int> x = {4,14,3};
+
+  //cout << findMinIndex(x) << endl;
   return 0;
 
 }
