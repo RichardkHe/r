@@ -89,9 +89,9 @@ int main (int argc, char *argv[])
     return 1;
   }
 
-  ifstream file("Read.txt");
+  ifstream file(argv[1]);
   string str; 
-  while (std::getline(file, str))
+  while (getline(file, str))
   {
     cout << str << endl;
   }
