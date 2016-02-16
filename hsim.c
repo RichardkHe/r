@@ -9,9 +9,13 @@
 #include <cmath>
 #include <fstream>
 #include <string>
+#include <sstream>
+#include <iterator>
+#include <numeric>
 
 using namespace std;
 
+//=================================================================================================================
 double calcMean (vector<double> inputlist)
 {
   double sum =0;
@@ -76,12 +80,58 @@ bool checkError(double e)
   }
   return false;
 }
+//old functions
+//=================================================================================================================
 
+void printoutArray(string x, vector<int> vec)
+{
+  cout << "[";
+  for (unsigned int y=0; y< vec.size(); y++)
+  {
+    {
+      cout << vec[y] << " ";
+    }
+  }
+  cout <<"]"<<endl;
+}
+
+int degreeOfNode(int i, vector< vector<int> > neighbours)
+{
+  return (neighbours[i]).size();
+}
+
+double degreeOfNetwork(vector< vector<int> > neighbours)
+{
+  double sum = 0;
+
+  for (unsigned int i =0; i<neighbours.size(); i++)
+  {
+    sum += degreeOfNode(i, neighbours);
+  }
+  
+  return sum/neighbours.size();
+}
+
+
+//http://cboard.cprogramming.com/cplusplus-programming/126689-converting-string-vector-integer-vector.html
+vector<int> vecstr_to_vecint(vector<string> vs)
+{
+    vector<int> ret;
+    for(vector<string>::iterator it=vs.begin();it!=vs.end();++it)
+    {
+        istringstream iss(*it);
+        int temp;
+        iss >> temp;
+        ret.push_back(temp);
+    }  
+    return ret;
+}
+
+//=================================================================================================================
 
 int main (int argc, char *argv[])
 {
-
-
+  
   //Check the number of arguments
   if (argc !=2)
   {
@@ -89,15 +139,44 @@ int main (int argc, char *argv[])
     return 1;
   }
 
+  vector< vector<int> > neighbours;
+  
   ifstream file(argv[1]);
   string str; 
   while (getline(file, str))
   {
-    cout << str << endl;
+    //http://www.cplusplus.com/forum/beginner/87238/
+    istringstream buf(str);
+    istream_iterator<string> beg(buf), end;
+    vector<string> tokens(beg, end);
+
+    //vecstr_to_vecint(tokens);
+    
+    neighbours.push_back(vecstr_to_vecint(tokens));
   }
 
+  
+  vector<int> temp = neighbours[0];
+
+  int number_of_nodes = temp[0];
+
+  cout << number_of_nodes << endl;
+
+  
+  neighbours.erase(neighbours.begin());
+
+  /*
+  for(unsigned int i =0; i< neighbours.size(); i++)
+  {
+    printoutArray("x", neighbours[i]);
+  }
+  */
+
+  cout << degreeOfNetwork(neighbours) << endl;
   
 
   return 0;
 
 }
+
+//=================================================================================================================
