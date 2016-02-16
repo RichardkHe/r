@@ -12,6 +12,7 @@
 #include <sstream>
 #include <iterator>
 #include <numeric>
+#include <algorithm>
 
 using namespace std;
 
@@ -95,6 +96,34 @@ void printoutArray(string x, vector<int> vec)
   cout <<"]"<<endl;
 }
 
+//Print format": Link State Routing:    average number of transmissions,   average path length 
+void printOutPut(string x, double a, double b)
+{
+  cout << x << ":  " << a << ", " << b <<endl;
+}
+
+//Print format": Link State Routing:    average number of transmissions,   average path length 
+void printOutPut(string x, double a)
+{
+  cout << x << ":  " << a <<endl;
+}
+
+//http://cboard.cprogramming.com/cplusplus-programming/126689-converting-string-vector-integer-vector.html
+vector<int> vecstr_to_vecint(vector<string> vs)
+{
+    vector<int> ret;
+    for(vector<string>::iterator it=vs.begin();it!=vs.end();++it)
+    {
+        istringstream iss(*it);
+        int temp;
+        iss >> temp;
+        ret.push_back(temp);
+    }  
+    return ret;
+}
+
+//----------------------------------------------------------------------------------------------------------------
+
 int degreeOfNode(int i, vector< vector<int> > neighbours)
 {
   return (neighbours[i]).size();
@@ -112,25 +141,38 @@ double degreeOfNetwork(vector< vector<int> > neighbours)
   return sum/neighbours.size();
 }
 
-
-//http://cboard.cprogramming.com/cplusplus-programming/126689-converting-string-vector-integer-vector.html
-vector<int> vecstr_to_vecint(vector<string> vs)
+bool elementInList(vector <int> list, int item)
 {
-    vector<int> ret;
-    for(vector<string>::iterator it=vs.begin();it!=vs.end();++it)
-    {
-        istringstream iss(*it);
-        int temp;
-        iss >> temp;
-        ret.push_back(temp);
-    }  
-    return ret;
+  return (find(list.begin(), list.end(), item) != list.end()); 
 }
+
+
+vector< int  > shortPath (int source, vector< vector<int> > neighbours)
+{
+  
+  vector<int> distance(neighbours.size());
+
+  for(unsigned int i =0; i<neighbours.size(); i++)
+  {
+    if (elementInList(neighbours[i], source))
+    {
+      distance[i]= 1;
+      
+    }
+  }
+
+  printoutArray("", distance);
+
+  
+  return distance;
+}
+
 
 //=================================================================================================================
 
 int main (int argc, char *argv[])
 {
+  //--------------------------------------------------------------------
   
   //Check the number of arguments
   if (argc !=2)
@@ -155,16 +197,16 @@ int main (int argc, char *argv[])
     neighbours.push_back(vecstr_to_vecint(tokens));
   }
 
-  
+
+  //Get number of nodes
   vector<int> temp = neighbours[0];
-
   int number_of_nodes = temp[0];
-
   cout << number_of_nodes << endl;
 
-  
+  //Erase the number of nodes from neighbours
   neighbours.erase(neighbours.begin());
 
+  //Test print neighbours
   /*
   for(unsigned int i =0; i< neighbours.size(); i++)
   {
@@ -172,8 +214,27 @@ int main (int argc, char *argv[])
   }
   */
 
-  cout << degreeOfNetwork(neighbours) << endl;
+  //--------------------------------------------------------------------
+
+  //cout << degreeOfNetwork(neighbours) << endl;
   
+
+  //--PRINT OUT STUFF----------------------------------------------------------------------------------
+
+  /*
+  //N        average degree of the network
+  printOutPut("N", 3.4);
+  //Link State Routing:    average number of transmissions,   average path length 
+  printOutPut("Link State Routing", 2.3, 3.4);
+  //Distance Vector Routing:  average number of transmissions, average path length
+  printOutPut("Distance Vector Routing", 2.3, 3.4);
+  //Hot Potato I:   average number of transmissions confidence interval,  average path length  confidence interval
+  printOutPut("Hot Potato I", 2.3, 3.4);
+  //Hot Potato II:   average number of transmissions confidence interval,  average path length  confidence interval
+  printOutPut("Hot Potato II", 2.3, 3.4);
+  //--PRINT OUT STUFF----------------------------------------------------------------------------------
+  */
+  shortPath (0, neighbours);
 
   return 0;
 
