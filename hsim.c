@@ -86,14 +86,14 @@ bool checkError(double e)
 
 void printoutArray(string x, vector<int> vec)
 {
-  cout << "[";
+  cout << x;
   for (unsigned int y=0; y< vec.size(); y++)
   {
     {
-      cout << vec[y] << " ";
+      cout <<vec[y] << " ";
     }
   }
-  cout <<"]"<<endl;
+  cout <<""<<endl;
 }
 
 //Print format": Link State Routing:    average number of transmissions,   average path length 
@@ -147,20 +147,23 @@ bool elementInList(vector <int> list, int item)
 }
 
 
-int findMinIndex(vector <int> list)
+int findMinIndex(vector <int> distance, vector<int> queue)
 {
   int min_value = 999999999;
-  int min_index = 0;
+  int min_index = -1;
   
-  for(unsigned int i =0; i< list.size() ; i++)
+  for(unsigned int i =0; i< queue.size() ; i++)
   {
-    if (list[i] <= min_value)
+    
+
+    if (distance[(queue[i])] < min_value)
     {
-      min_value = list[i];
+      min_value = distance[(queue[i])];
       min_index = i;
     }
     
   }
+
   return min_index;
 }
 //0,1 ,2 ... etc to size
@@ -179,21 +182,14 @@ vector< int  > shortPath (int source, vector< vector<int> > neighbours)
 {
   //queue contains the nodes that haven't been look at yet
   vector<int> queue = generateQueue(neighbours.size());
-
+  
   queue.erase(queue.begin() + source);
-
 
 
   vector< vector<int> > shortestPaths(neighbours.size());
 
   shortestPaths[source] = {source};
 
-  /*
-  for(unsigned int i =0; i< shortestPaths.size(); i++)
-  {
-    printoutArray("x", shortestPaths[i]);
-  }
-  */
   
   vector<int> distance(neighbours.size());
 
@@ -211,27 +207,41 @@ vector< int  > shortPath (int source, vector< vector<int> > neighbours)
   }
 
   distance[source] = 0;
-  //printoutArray("", neighbours);
 
-  /*
-  for(unsigned int i =0; i< neighbours.size(); i++)
+  
+  while(queue.size() > 0)
   {
-    printoutArray("x", neighbours[i]);
-  }
-  */
-  int nextNode = findMinIndex(distance);
-  queue.erase(queue.begin() + nextNode);
+    int nextNodeQIndex = findMinIndex(distance, queue);
 
-  for(unsigned int i =0; i< neighbours[nextNode].size(); i++)
-  {
-    int neighbour = ((neighbours[nextNode])[i]);
+    //cout << "NEXT NODE: " << nextNode << endl;
+
+    //printoutArray("", queue);
+    int nextNodeIndex = (queue[nextNodeQIndex]);
+
+    vector<int> neighbours_of_nextNode = (neighbours[nextNodeIndex]);
+
     
-    if( elementInList(queue, neighbour))
-    {
+    queue.erase(queue.begin() + nextNodeQIndex);
       
-      distance[neighbour] = min(distance[nextNode]+1, distance[neighbour]);
+    //printoutArray("", queue);
+    //cout << queue.size() << endl;
+
+
+    
+    
+    for(unsigned int i =0; i< neighbours_of_nextNode.size(); i++)
+    {
+      int neighbour = (neighbours_of_nextNode)[i];
+      
+      if( elementInList(queue, neighbour))
+      {
+        
+        distance[neighbour] = min(distance[nextNodeIndex]+1, distance[neighbour]);
+      }
+      
     }
     
+
   }
   printoutArray("", distance);
 
@@ -320,9 +330,18 @@ int main (int argc, char *argv[])
   */
 
   shortPath (0, neighbours);
-  //vector <int> x = {4,14,3};
+  shortPath (1, neighbours);
+  shortPath (2, neighbours);
+  shortPath (3, neighbours);
+  shortPath (4, neighbours);
+  shortPath (5, neighbours);
+  /*
+  vector <int> x = {9999,9999,1,0};
 
-  //cout << findMinIndex(x) << endl;
+  vector <int> y = {0,1,2};
+  
+  cout << "FINDMININEX: "<<findMinIndex(x,y) << endl;
+  */
   return 0;
 
 }
