@@ -163,9 +163,37 @@ int findMinIndex(vector <int> list)
   }
   return min_index;
 }
+//0,1 ,2 ... etc to size
+vector<int> generateQueue(int size)
+{
+  vector<int> queue;
+
+  for(int i=0; i<size;i++)
+  {
+    queue.push_back(i);
+  }
+  return queue;
+}
 
 vector< int  > shortPath (int source, vector< vector<int> > neighbours)
 {
+  //queue contains the nodes that haven't been look at yet
+  vector<int> queue = generateQueue(neighbours.size());
+
+  queue.erase(queue.begin() + source);
+
+
+
+  vector< vector<int> > shortestPaths(neighbours.size());
+
+  shortestPaths[source] = {source};
+
+  /*
+  for(unsigned int i =0; i< shortestPaths.size(); i++)
+  {
+    printoutArray("x", shortestPaths[i]);
+  }
+  */
   
   vector<int> distance(neighbours.size());
 
@@ -181,12 +209,44 @@ vector< int  > shortPath (int source, vector< vector<int> > neighbours)
       distance[i] = 9999;
     }
   }
-  
-  int minhal = findMinIndex(distance);
 
-  cout << minhal << endl;
-  //printoutArray("", distance);
+  distance[source] = 0;
+  //printoutArray("", neighbours);
 
+  /*
+  for(unsigned int i =0; i< neighbours.size(); i++)
+  {
+    printoutArray("x", neighbours[i]);
+  }
+  */
+  int nextNode = findMinIndex(distance);
+  queue.erase(queue.begin() + nextNode);
+
+  for(unsigned int i =0; i< neighbours[nextNode].size(); i++)
+  {
+    int neighbour = ((neighbours[nextNode])[i]);
+    
+    if( elementInList(queue, neighbour))
+    {
+      
+      distance[neighbour] = min(distance[nextNode]+1, distance[neighbour]);
+    }
+    
+  }
+  printoutArray("", distance);
+
+
+  //cout << min << endl;
+
+  //printoutArray("", neighbours);
+  //cout << "==========" << endl;
+
+  /*
+  for(unsigned int i =0; i< neighbours.size(); i++)
+  {
+    printoutArray("x", neighbours[i]);
+  }
+  */
   
   return distance;
 }
@@ -225,7 +285,7 @@ int main (int argc, char *argv[])
   //Get number of nodes
   vector<int> temp = neighbours[0];
   int number_of_nodes = temp[0];
-  cout << number_of_nodes << endl;
+  cout <<"NUmber of nodes: " <<number_of_nodes << endl;
 
   //Erase the number of nodes from neighbours
   neighbours.erase(neighbours.begin());
@@ -259,7 +319,7 @@ int main (int argc, char *argv[])
   //--PRINT OUT STUFF----------------------------------------------------------------------------------
   */
 
-  shortPath (1, neighbours);
+  shortPath (0, neighbours);
   //vector <int> x = {4,14,3};
 
   //cout << findMinIndex(x) << endl;
