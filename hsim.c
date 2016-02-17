@@ -166,6 +166,12 @@ int findMinIndex(vector <int> distance, vector<int> queue)
 
   return min_index;
 }
+
+int findMax( vector<int> list)
+{ 
+  return *(max_element(list.begin(), list.end())); 
+}
+
 //0,1 ,2 ... etc to size
 vector<int> generateQueue(int size)
 {
@@ -178,7 +184,9 @@ vector<int> generateQueue(int size)
   return queue;
 }
 
-vector< int  > shortPath (int source, vector< vector<int> > neighbours)
+
+
+vector< int > shortPathDistance (int source, vector< vector<int> > neighbours)
 {
   //queue contains the nodes that haven't been look at yet
   vector<int> queue = generateQueue(neighbours.size());
@@ -262,6 +270,35 @@ vector< int  > shortPath (int source, vector< vector<int> > neighbours)
 }
 
 
+int CalcDiam( vector< vector<int> > neighbours )
+{
+  int max_path = 0;
+  
+  for(unsigned int i=0; i<neighbours.size(); i++)
+  {
+    int node = i;
+    
+    int localmax = findMax(shortPathDistance(node, neighbours));
+
+    if(localmax > max_path)
+    {
+      max_path = localmax;
+    }
+  }
+
+  return max_path;
+  
+}
+
+//TO DO
+int findPathLength(int a, int b, vector< vector<int> > neighbours)
+{
+  vector<int> neighbour_distances = shortPathDistance (a, neighbours);
+
+  return neighbour_distances[b];
+}
+
+
 //=================================================================================================================
 
 int main (int argc, char *argv[])
@@ -329,19 +366,15 @@ int main (int argc, char *argv[])
   //--PRINT OUT STUFF----------------------------------------------------------------------------------
   */
 
-  shortPath (0, neighbours);
-  shortPath (1, neighbours);
-  shortPath (2, neighbours);
-  shortPath (3, neighbours);
-  shortPath (4, neighbours);
-  shortPath (5, neighbours);
-  /*
-  vector <int> x = {9999,9999,1,0};
-
-  vector <int> y = {0,1,2};
   
-  cout << "FINDMININEX: "<<findMinIndex(x,y) << endl;
-  */
+
+
+  //vector <int> y = {0,5,2};
+
+  
+  
+  cout << "FINDMax: "<< findPathLength(1, 4, neighbours) << endl;
+  
   return 0;
 
 }
