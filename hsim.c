@@ -263,19 +263,17 @@ int CalcDiam( vector< vector<int> > neighbours )
       max_path = localmax;
     }
   }
-
   return max_path;
-  
 }
 
-//TO DO
+//TO DO ?????
 int findPathLength(int a, int b, vector< vector<int> > neighbours)
 {
   vector<int> neighbour_distances = shortPathDistance (a, neighbours);
 
   return neighbour_distances[b];
 }
-
+//--------------------------------------------------------------------------------------
 double findAvgPathLength(vector< vector<int> > neighbours)
 {
   int sum = 0;
@@ -306,6 +304,7 @@ double DV_avgtrans(vector< vector<int> > neighbours)
 
   return numb_of_trans/neighbours.size();
 }
+//--------------------------------------------------------------------------------------
 
 double linkStateFlooding(int source, vector< vector<int> > neighbours)
 {
@@ -323,23 +322,11 @@ double linkStateFlooding(int source, vector< vector<int> > neighbours)
   
   while(!queue.empty())
   {
-
-    /*
-    //remove source
-    vector<int>::iterator position = std::find(queue.begin(), queue.end(), source);
-    if (position != queue.end()) // == myVector.end() means the element was not found
-    {
-      queue.erase(position);
-    }
-    */
-    
     //Pop the front
-    int current_node = queue[0];
-    
+    int current_node = queue[0];   
     queue.erase(queue.begin());
 
     int parent = queueParent[0];
-    
     queueParent.erase(queueParent.begin());
     
     //If it has not send yet
@@ -363,17 +350,25 @@ double linkStateFlooding(int source, vector< vector<int> > neighbours)
       }
     }
 
-    
+  }
+  //printOutPut("trans", trans );
+  return trans;
+}
 
+double linkStateAvgTrans(vector< vector<int> > neighbours)
+{
+  double sum = 0;
+
+  for (unsigned int i=0; i< neighbours.size();i++)
+  {
+    sum += linkStateFlooding(i,neighbours);
   }
 
-  printOutPut("trans", trans );
-  
-  return 0;
+  return (double)sum/neighbours.size();
 }
 
 
-//=================================================================================================================
+//====M A I N=============================================================================================================
 
 int main (int argc, char *argv[])
 {
@@ -419,22 +414,18 @@ int main (int argc, char *argv[])
   }
   */
 
-  //--------------------------------------------------------------------
-
-  //cout << degreeOfNetwork(neighbours) << endl;
-  
 
   //--PRINT OUT STUFF----------------------------------------------------------------------------------
 
   cout << ""<< endl;
   //N        average degree of the network  
-  cout <<"#ofNodes: "  <<number_of_nodes<< "  DEGREE: " << degreeOfNetwork(neighbours) << endl;
+  cout <<"#ofNodes: "  <<number_of_nodes<< "  Avg#OfNeighbours(DEGREE): " << degreeOfNetwork(neighbours) << endl;
   
   //Link State Routing:    average number of transmissions,   average path length 
-  printOutPut("Link State Routing", 123456, findAvgPathLength(neighbours) );
+  printOutPut("Link State Routing", linkStateAvgTrans(neighbours), findAvgPathLength(neighbours) );
   
   //Distance Vector Routing:  average number of transmissions, average path length
-  printOutPut("Distance Vector Routing", DV_avgtrans( neighbours ), findAvgPathLength(neighbours) );
+  printOutPut("Distance Vector Routing", DV_avgtrans(neighbours), findAvgPathLength(neighbours) );
 
   /*
   //Hot Potato I:   average number of transmissions confidence interval,  average path length  confidence interval
@@ -446,15 +437,9 @@ int main (int argc, char *argv[])
 
   cout <<""<< endl;
   
-
-
   //vector <int> y = {0,5,2};
-
   
-  
-  cout << "Currently testing: "<< linkStateFlooding(1, neighbours) << endl;
-
-
+  cout << "Currently testing: "<< linkStateAvgTrans(neighbours) << endl;
   
   
   return 0;
