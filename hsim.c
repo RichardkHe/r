@@ -82,7 +82,7 @@ bool checkError(double e)
   return false;
 }
 //old functions
-//=================================================================================================================
+//=====Print HELPER FUNCTIONS============================================================================================================
 
 void printoutArray(string x, vector<int> vec)
 {
@@ -108,6 +108,12 @@ void printOutPut(string x, double a)
   cout << x << ":  " << a <<endl;
 }
 
+//===Print HELPER FUNCTIONS===============================================================================================================
+
+
+
+//---HELPER FUNCTIONS-------------------------------------------------------------------------------------------------------------
+
 //http://cboard.cprogramming.com/cplusplus-programming/126689-converting-string-vector-integer-vector.html
 vector<int> vecstr_to_vecint(vector<string> vs)
 {
@@ -121,8 +127,6 @@ vector<int> vecstr_to_vecint(vector<string> vs)
     }  
     return ret;
 }
-
-//----------------------------------------------------------------------------------------------------------------
 
 int degreeOfNode(int i, vector< vector<int> > neighbours)
 {
@@ -141,11 +145,11 @@ double degreeOfNetwork(vector< vector<int> > neighbours)
   return sum/neighbours.size();
 }
 
+//Contains function
 bool elementInList(vector <int> list, int item)
 {
   return (find(list.begin(), list.end(), item) != list.end()); 
 }
-
 
 int findMinIndex(vector <int> distance, vector<int> queue)
 {
@@ -154,8 +158,6 @@ int findMinIndex(vector <int> distance, vector<int> queue)
   
   for(unsigned int i =0; i< queue.size() ; i++)
   {
-    
-
     if (distance[(queue[i])] < min_value)
     {
       min_value = distance[(queue[i])];
@@ -184,8 +186,16 @@ vector<int> generateQueue(int size)
   return queue;
 }
 
+//---HELPER FUNCTIONS-------------------------------------------------------------------------------------------------------------
 
 
+
+
+
+
+
+//============================================================================================================
+//Dijstraka - calcuates the distance vector
 vector< int > shortPathDistance (int source, vector< vector<int> > neighbours)
 {
   //queue contains the nodes that haven't been look at yet
@@ -193,11 +203,9 @@ vector< int > shortPathDistance (int source, vector< vector<int> > neighbours)
   
   queue.erase(queue.begin() + source);
 
-
   vector< vector<int> > shortestPaths(neighbours.size());
 
   shortestPaths[source] = {source};
-
   
   vector<int> distance(neighbours.size());
 
@@ -215,28 +223,15 @@ vector< int > shortPathDistance (int source, vector< vector<int> > neighbours)
   }
 
   distance[source] = 0;
-
   
   while(queue.size() > 0)
   {
     int nextNodeQIndex = findMinIndex(distance, queue);
-
-    //cout << "NEXT NODE: " << nextNode << endl;
-
-    //printoutArray("", queue);
     int nextNodeIndex = (queue[nextNodeQIndex]);
-
     vector<int> neighbours_of_nextNode = (neighbours[nextNodeIndex]);
-
     
     queue.erase(queue.begin() + nextNodeQIndex);
-      
-    //printoutArray("", queue);
-    //cout << queue.size() << endl;
 
-
-    
-    
     for(unsigned int i =0; i< neighbours_of_nextNode.size(); i++)
     {
       int neighbour = (neighbours_of_nextNode)[i];
@@ -246,29 +241,12 @@ vector< int > shortPathDistance (int source, vector< vector<int> > neighbours)
         
         distance[neighbour] = min(distance[nextNodeIndex]+1, distance[neighbour]);
       }
-      
     }
-    
-
   }
-  printoutArray("", distance);
-
-
-  //cout << min << endl;
-
-  //printoutArray("", neighbours);
-  //cout << "==========" << endl;
-
-  /*
-  for(unsigned int i =0; i< neighbours.size(); i++)
-  {
-    printoutArray("x", neighbours[i]);
-  }
-  */
-  
+  //printoutArray("", distance);
   return distance;
 }
-
+//============================================================================================================
 
 int CalcDiam( vector< vector<int> > neighbours )
 {
@@ -296,6 +274,102 @@ int findPathLength(int a, int b, vector< vector<int> > neighbours)
   vector<int> neighbour_distances = shortPathDistance (a, neighbours);
 
   return neighbour_distances[b];
+}
+
+double findAvgPathLength(vector< vector<int> > neighbours)
+{
+  int sum = 0;
+
+  for(unsigned int i=0; i< neighbours.size(); i++)
+  {
+    for (unsigned int x =0; x< neighbours.size(); x++)
+
+    {
+      sum += findPathLength(x, i, neighbours);
+
+    }
+  }
+  return (double)sum/(neighbours.size()*neighbours.size());
+}
+
+
+double DV_avgtrans(vector< vector<int> > neighbours)
+{
+  double numb_of_trans = 0;
+
+  double diameter_of_network = CalcDiam(neighbours);
+
+  for(unsigned int i=0; i< neighbours.size(); i++)
+  {
+    numb_of_trans += degreeOfNode(i, neighbours)*diameter_of_network;
+  }
+
+  return numb_of_trans/neighbours.size();
+}
+
+double linkStateFlooding(int source, vector< vector<int> > neighbours)
+{
+  int trans = 0;
+  
+  vector <int> nodesSend(neighbours.size());
+  
+  vector<int> queue; //this will contains nodes in a sequence
+  vector<int> queueParent; //this will contains parent node parallel list
+  
+  //send to out going links, does not send if its a deadend, else it must send once, and receive once, and source only once
+
+  queueParent.push_back(-1);
+  queue.push_back(source);
+  
+  while(!queue.empty())
+  {
+
+    /*
+    //remove source
+    vector<int>::iterator position = std::find(queue.begin(), queue.end(), source);
+    if (position != queue.end()) // == myVector.end() means the element was not found
+    {
+      queue.erase(position);
+    }
+    */
+    
+    //Pop the front
+    int current_node = queue[0];
+    
+    queue.erase(queue.begin());
+
+    int parent = queueParent[0];
+    
+    queueParent.erase(queueParent.begin());
+    
+    //If it has not send yet
+    if(nodesSend[current_node] != 1)
+    {
+      //current node's neighbours
+      vector<int> node_neighbours = neighbours[current_node];
+
+      //Now the current node has been marked that it has sent
+      nodesSend[current_node] = 1;
+
+      //Sending to its neighbours
+      for(unsigned int i=0; i< node_neighbours.size(); i++)
+      {
+        if(parent != node_neighbours[i])
+        {
+          queueParent.push_back(current_node);
+          queue.push_back(node_neighbours[i]);
+          trans++;
+        }
+      }
+    }
+
+    
+
+  }
+
+  printOutPut("trans", trans );
+  
+  return 0;
 }
 
 
@@ -332,7 +406,7 @@ int main (int argc, char *argv[])
   //Get number of nodes
   vector<int> temp = neighbours[0];
   int number_of_nodes = temp[0];
-  cout <<"NUmber of nodes: " <<number_of_nodes << endl;
+  
 
   //Erase the number of nodes from neighbours
   neighbours.erase(neighbours.begin());
@@ -352,13 +426,17 @@ int main (int argc, char *argv[])
 
   //--PRINT OUT STUFF----------------------------------------------------------------------------------
 
-  /*
-  //N        average degree of the network
-  printOutPut("N", 3.4);
+  cout << ""<< endl;
+  //N        average degree of the network  
+  cout <<"#ofNodes: "  <<number_of_nodes<< "  DEGREE: " << degreeOfNetwork(neighbours) << endl;
+  
   //Link State Routing:    average number of transmissions,   average path length 
-  printOutPut("Link State Routing", 2.3, 3.4);
+  printOutPut("Link State Routing", 123456, findAvgPathLength(neighbours) );
+  
   //Distance Vector Routing:  average number of transmissions, average path length
-  printOutPut("Distance Vector Routing", 2.3, 3.4);
+  printOutPut("Distance Vector Routing", DV_avgtrans( neighbours ), findAvgPathLength(neighbours) );
+
+  /*
   //Hot Potato I:   average number of transmissions confidence interval,  average path length  confidence interval
   printOutPut("Hot Potato I", 2.3, 3.4);
   //Hot Potato II:   average number of transmissions confidence interval,  average path length  confidence interval
@@ -366,6 +444,7 @@ int main (int argc, char *argv[])
   //--PRINT OUT STUFF----------------------------------------------------------------------------------
   */
 
+  cout <<""<< endl;
   
 
 
@@ -373,7 +452,10 @@ int main (int argc, char *argv[])
 
   
   
-  cout << "FINDMax: "<< findPathLength(1, 4, neighbours) << endl;
+  cout << "Currently testing: "<< linkStateFlooding(1, neighbours) << endl;
+
+
+  
   
   return 0;
 
