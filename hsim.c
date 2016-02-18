@@ -16,7 +16,7 @@
 
 using namespace std;
 
-//=================================================================================================================
+//===STAT FUNCTIONS==============================================================================================================
 double calcMean (vector<double> inputlist)
 {
   double sum =0;
@@ -64,11 +64,12 @@ vector<double> conInterval(vector<double> inputlist)
 
   return myvector;
 }
+//===STAT FUNCTIONS==============================================================================================================
 
 
-//old functions
 //=====Print HELPER FUNCTIONS============================================================================================================
 
+//Print out whats in an vector
 void printoutArray(string x, vector<int> vec)
 {
   cout << x;
@@ -81,13 +82,32 @@ void printoutArray(string x, vector<int> vec)
   cout <<""<<endl;
 }
 
+void printoutArray(string x, vector<double> vec)
+{
+  cout << x;
+  for (unsigned int y=0; y< vec.size(); y++)
+  {
+    {
+      cout <<vec[y] << " ";
+    }
+  }
+  cout <<""<<endl;
+}
+
+
+//Print format for Hot potato format
+void printOutPut(string x, double a, double a1, double a2, double b, double b1, double b2)
+{
+  cout << x << ":  " << a <<" (" << a1 <<", " << a2 <<"), " << b <<" (" << b1 <<", " << b2 <<")" <<endl;
+}
+
 //Print format": Link State Routing:    average number of transmissions,   average path length 
 void printOutPut(string x, double a, double b)
 {
   cout << x << ":  " << a << ", " << b <<endl;
 }
 
-//Print format": Link State Routing:    average number of transmissions,   average path length 
+//Help print tester
 void printOutPut(string x, double a)
 {
   cout << x << ":  " << a <<endl;
@@ -179,9 +199,20 @@ vector<int> generateQueue(int size)
   return queue;
 }
 
+//Remove an element and return the vector
+vector<int> removeElement(vector<int> myVector, int item)
+{
+
+  vector<int>::iterator position = find(myVector.begin(), myVector.end(), item);
+  if (position != myVector.end()) // == myVector.end() means the element was not found
+    myVector.erase(position);
+
+  return myVector;
+}
+
+
+
 //---HELPER FUNCTIONS-------------------------------------------------------------------------------------------------------------
-
-
 
 
 
@@ -239,7 +270,14 @@ vector< int > shortPathDistance (int source, vector< vector<int> > neighbours)
   //printoutArray("", distance);
   return distance;
 }
-//============================================================================================================
+
+//TO DO ?????
+int findPathLength(int a, int b, vector< vector<int> > neighbours)
+{
+  vector<int> neighbour_distances = shortPathDistance (a, neighbours);
+
+  return neighbour_distances[b];
+}
 
 int CalcDiam( vector< vector<int> > neighbours )
 {
@@ -259,13 +297,9 @@ int CalcDiam( vector< vector<int> > neighbours )
   return max_path;
 }
 
-//TO DO ?????
-int findPathLength(int a, int b, vector< vector<int> > neighbours)
-{
-  vector<int> neighbour_distances = shortPathDistance (a, neighbours);
+//============================================================================================================
 
-  return neighbour_distances[b];
-}
+
 //--------------------------------------------------------------------------------------
 double findAvgPathLength(vector< vector<int> > neighbours)
 {
@@ -299,6 +333,8 @@ double DV_avgtrans(vector< vector<int> > neighbours)
 }
 //--------------------------------------------------------------------------------------
 
+
+//=============================================================================================================================
 double linkStateFlooding(int source, vector< vector<int> > neighbours)
 {
   int trans = 0;
@@ -360,17 +396,9 @@ double linkStateAvgTrans(vector< vector<int> > neighbours)
   return (double)sum/neighbours.size();
 }
 
-vector<int> removeElement(vector<int> myVector, int item)
-{
-
-  vector<int>::iterator position = find(myVector.begin(), myVector.end(), item);
-  if (position != myVector.end()) // == myVector.end() means the element was not found
-    myVector.erase(position);
+//=============================================================================================================================
 
 
-  
-  return myVector;
-}
 
 
 //---potato-------------------------------------------------------------------------------------------------------------------
