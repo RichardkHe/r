@@ -66,21 +66,6 @@ vector<double> conInterval(vector<double> inputlist)
 }
 
 
-//Generate an random number between 0 and 1
-double randd()
-{
-  return (double)rand() / (RAND_MAX + 1.0);
-}
-
-//Check if random number is <= e (the error rate)
-bool checkError(double e)
-{
-  if (randd() <= e)
-  {
-    return true;
-  }
-  return false;
-}
 //old functions
 //=====Print HELPER FUNCTIONS============================================================================================================
 
@@ -131,6 +116,14 @@ vector<int> vecstr_to_vecint(vector<string> vs)
 int degreeOfNode(int i, vector< vector<int> > neighbours)
 {
   return (neighbours[i]).size();
+}
+
+//Return random element from list
+int randElement(vector<int> list)
+{
+  int x = rand();
+  int rand_index = x % list.size();
+  return list[rand_index];
 }
 
 double degreeOfNetwork(vector< vector<int> > neighbours)
@@ -367,11 +360,63 @@ double linkStateAvgTrans(vector< vector<int> > neighbours)
   return (double)sum/neighbours.size();
 }
 
+vector<int> removeElement(vector<int> myVector, int item)
+{
+
+  vector<int>::iterator position = find(myVector.begin(), myVector.end(), item);
+  if (position != myVector.end()) // == myVector.end() means the element was not found
+    myVector.erase(position);
+
+
+  
+  return myVector;
+}
+
+
+//---potato-------------------------------------------------------------------------------------------------------------------
+
+vector <int> findHotPotato1Path(int source, int dest, vector< vector<int> > neighbours)
+{
+  vector <int> path;
+
+  //added first to current list
+  path.push_back(source);
+
+  int currentNode = path[path.size()-1];
+  
+  while((currentNode = path[path.size()-1]) != dest)
+  {
+     
+    vector<int> current_node_neighbours = neighbours[currentNode];
+
+    
+    if((path.size() >= 2) && (current_node_neighbours.size() >1))
+    {
+      int previousNode = path[(path.size()-2)];
+      current_node_neighbours = removeElement(current_node_neighbours, previousNode);
+    }
+    
+    int rand_neighbour = randElement(current_node_neighbours);
+
+    
+    
+    path.push_back(rand_neighbour);
+
+    
+  }
+
+  printoutArray("Potato", path);
+
+  return path;
+}
+
+
 
 //====M A I N=============================================================================================================
 
 int main (int argc, char *argv[])
 {
+  srand(time(NULL));
   //--------------------------------------------------------------------
   
   //Check the number of arguments
@@ -437,9 +482,12 @@ int main (int argc, char *argv[])
 
   cout <<""<< endl;
   
-  //vector <int> y = {0,5,2};
+  //vector <int> y = {0,5,2,1, 33, 56, 32};
+
+  findHotPotato1Path(0, 1, neighbours);
+
   
-  cout << "Currently testing: "<< linkStateAvgTrans(neighbours) << endl;
+  //cout << "Currently testing: "<< findHotPotato1Path(0, 1, neighbours) << endl;
   
   
   return 0;
