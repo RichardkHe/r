@@ -519,11 +519,13 @@ vector <int> removeLoopFromPotato (vector <int> list)
   for(int i =0; i<(int)list.size(); i++)
   {
     
-    for (int x = (int)list.size()-1; x > i; x--)
+    for (int x = (int)list.size()-1; x > i+1; x--)
     {
       //printOutPut("x : ", x);
       if (list[i] == list[x])
       {
+
+        printOutPut("removed : ", list[i]);
         /*
         cout << "hi" << endl;
         printOutPut("i : ", i);
@@ -546,8 +548,8 @@ vector <int> removeLoopFromPotato (vector <int> list)
     }
     
   }
-  printOutPut("front : ", front_index);
-  printOutPut("back : ", back_index);
+  //printOutPut("front : ", front_index);
+  //printOutPut("back : ", back_index);
   c.erase(c.begin() +front_index, c.begin()+back_index); 
   
   
@@ -625,10 +627,10 @@ int main (int argc, char *argv[])
   */
 
   cout <<""<< endl;
-  //vector <int> acc = {0, 12, 13, 19, 22, 24, 16, 21, 24 ,16 ,10, 3, 2, 9, 8, 7, 1 };
+  vector <int> acc = {0,1,2,4,1,0,2,1,3,4,2,1,3,4,3,1,2,4,5 };
 
-  //printoutArray("before : ", acc);
-  //printoutArray("testing :", removeLoopFromPotato(acc));
+  printoutArray("before : ", acc);
+  printoutArray("testing :", removeLoopFromPotato(acc));
   
   //vector <int> y = {0,5, 32 ,2,1, 33, 56, 56, 56};
   //vector <int> x = {5,0, 32 ,2,1, 33, 56, 32, 32,  32, 56, 32};
@@ -642,13 +644,15 @@ int main (int argc, char *argv[])
   
   //cout << compare(y, x) << endl;
 
-  
+  /*
   vector <int> temp1 = findHotPotato1Path(0, 1, neighbours);
   
   printoutArray("Before: ", temp1);
 
   
-  printoutArray("After: ", removeLoopFromPotato(temp1));
+  printoutArray("After:  ", removeLoopFromPotato(temp1));
+  */
+
   
   //cout << "Currently testing: "<< findHotPotato1Path(0, 1, neighbours) << endl;
   
