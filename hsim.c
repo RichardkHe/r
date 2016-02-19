@@ -16,6 +16,51 @@
 
 using namespace std;
 
+//http://stackoverflow.com/questions/12200486/how-to-remove-duplicates-from-unsorted-stdvector-while-keeping-the-original-or
+
+struct target_less
+{
+    template<class It>
+    bool operator()(It const &a, It const &b) const { return *a < *b; }
+};
+struct target_equal
+{
+    template<class It>
+    bool operator()(It const &a, It const &b) const { return *a == *b; }
+};
+template<class It> It uniquify(It begin, It const end)
+{
+    std::vector<It> v;
+    v.reserve(static_cast<size_t>(std::distance(begin, end)));
+    for (It i = begin; i != end; ++i)
+    { v.push_back(i); }
+    std::sort(v.begin(), v.end(), target_less());
+    v.erase(std::unique(v.begin(), v.end(), target_equal()), v.end());
+    std::sort(v.begin(), v.end());
+    size_t j = 0;
+    for (It i = begin; i != end && j != v.size(); ++i)
+    {
+        if (i == v[j])
+        {
+            using std::iter_swap; iter_swap(i, begin);
+            ++j;
+            ++begin;
+        }
+    }
+    return begin;
+}
+
+
+//http://stackoverflow.com/questions/10506595/how-do-i-check-if-two-stdvectors-contain-only-the-same-elements
+
+bool compare(vector<int> v1, vector<int> v2)
+{
+    sort(v1.begin(), v1.end());
+    sort(v2.begin(), v2.end());
+    return v1 == v2;
+}
+
+
 //===STAT FUNCTIONS==============================================================================================================
 double calcMean (vector<double> inputlist)
 {
@@ -433,9 +478,78 @@ vector <int> findHotPotato1Path(int source, int dest, vector< vector<int> > neig
     
   }
 
-  printoutArray("Potato", path);
+  //printoutArray("Potato", path);
 
   return path;
+}
+
+/*
+vector<int>::iterator firstoccurance = v.begin(); 
+      v.erase(firstoccurance, it);
+  
+ */
+
+//Take in vector and remove any loops
+///x.erase(uniquify(x.begin(), x.end()), x.end())
+vector <int> removeLoopFromPotato (vector <int> list) 
+{
+  /*
+  vector<int> uniqueArray = list;
+
+  uniqueArray.erase(uniquify(uniqueArray.begin(), uniqueArray.end()), uniqueArray.end());
+
+  printoutArray("x ",uniqueArray);
+
+  
+  printoutArray("list: ", list);
+  
+  if (compare(uniqueArray, list))
+  {
+    return list;
+  }
+  */
+  
+  vector <int> c = list;
+
+  int front_index = 0;
+  int back_index = 0;
+
+  int break1 = 0;
+  
+  for(int i =0; i<(int)list.size(); i++)
+  {
+    
+    for (int x = (int)list.size()-1; x > i; x--)
+    {
+      //printOutPut("x : ", x);
+      if (list[i] == list[x])
+      {
+        cout << "hi" << endl;
+        printOutPut("i : ", i);
+        cout << "list[i] " << list[i] << endl;
+        printOutPut("x : ", x);
+        cout << "list[x] " << list[x] << endl;
+        front_index = i;
+        back_index = x;// - 1;
+
+        break1 =1;
+        break;
+      }
+    }
+    
+    
+    if (break1 ==1)
+    {
+      break;
+    }
+    
+  }
+  printOutPut("front : ", front_index);
+  printOutPut("back : ", back_index);
+  c.erase(c.begin() +front_index, c.begin()+back_index); //was + 1
+  
+  
+  return c; //removeLoopFromPotato (c);
 }
 
 
@@ -509,12 +623,31 @@ int main (int argc, char *argv[])
   */
 
   cout <<""<< endl;
-  
-  //vector <int> y = {0,5,2,1, 33, 56, 32};
+  vector <int> acc = {0, 12, 13, 19, 22, 24, 16, 21, 24 ,16 ,10, 3, 2, 9, 8, 7, 1 };
 
-  findHotPotato1Path(0, 1, neighbours);
+  printoutArray("before : ", acc);
+  printoutArray("testing :", removeLoopFromPotato(acc));
+  
+  //vector <int> y = {0,5, 32 ,2,1, 33, 56, 56, 56};
+  //vector <int> x = {5,0, 32 ,2,1, 33, 56, 32, 32,  32, 56, 32};
+
+  //x.erase(x.begin()+5, x.begin()+1);
+
+  //printoutArray("x :", x);
+  
+  //y.erase(uniquify(y.begin(), y.end()), y.end());
+  //x.erase(uniquify(x.begin(), x.end()), x.enxd());
+  
+  //cout << compare(y, x) << endl;
+
+  /*
+  vector <int> temp1 = findHotPotato1Path(0, 1, neighbours);
+  
+  printoutArray("Before: ", temp1);
 
   
+  printoutArray("After: ", removeLoopFromPotato(temp1));
+  */
   //cout << "Currently testing: "<< findHotPotato1Path(0, 1, neighbours) << endl;
   
   
