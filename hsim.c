@@ -98,7 +98,7 @@ vector<double> conInterval(vector<double> inputlist)
 
   double mean = calcMean(inputlist);
 
-  double crt = 2.776;
+  double crt = 2.262;
 
   double c1 = mean - crt*(std/sqrt(inputlist.size()));
   double c2 = mean + crt*(std/sqrt(inputlist.size()));
@@ -447,8 +447,9 @@ double linkStateAvgTrans(vector< vector<int> > neighbours)
 
 
 //---potato-------------------------------------------------------------------------------------------------------------------
-
-vector <int> findHotPotato1Path(int source, int dest, vector< vector<int> > neighbours)
+//hotpotato1 = false
+//hotpotato2 = true
+vector <int> findHotPotatoPath(int source, int dest, vector< vector<int> > neighbours, int type)
 {
   vector <int> path;
 
@@ -468,14 +469,22 @@ vector <int> findHotPotato1Path(int source, int dest, vector< vector<int> > neig
       int previousNode = path[(path.size()-2)];
       current_node_neighbours = removeElement(current_node_neighbours, previousNode);
     }
-    
-    int rand_neighbour = randElement(current_node_neighbours);
 
+    int rand_neighbour;
     
+    //hotpotato1 = 1
+    //hotpotato2 = 2
+    if((type == 2) && (elementInList(current_node_neighbours, dest)))
+    {      
+      rand_neighbour = dest;
+    }
+    else
+    {
+      rand_neighbour = randElement(current_node_neighbours);
+    }
     
     path.push_back(rand_neighbour);
 
-    
   }
 
   //printoutArray("Potato", path);
@@ -550,38 +559,49 @@ vector <int> removeLoopFromPotato (vector <int> list)
   return removeLoopFromPotato (c); //was c
 }
 
-double hotPotato1Trans(int source, int dest, vector< vector<int> > neighbours)
+double hotPotato(int source, int dest, vector< vector<int> > neighbours, vector<int> *path, vector<int> *pathLoopRemoved, int type)
 {
-  vector<int> path = findHotPotato1Path(source, dest, neighbours);
-  vector<int> pathLoopRemoved = removeLoopFromPotato(path);
   
-  return path.size() + pathLoopRemoved.size() - 2;  
+  *path = findHotPotatoPath(source, dest, neighbours, type);
+  *pathLoopRemoved = removeLoopFromPotato(*path);
+  
+  return (*path).size() + (*pathLoopRemoved).size() - 2;  
 }
 
-double hotPotato1AvgTrans(vector< vector<int> > neighbours)
+void hotPotatoTrial(vector< vector<int> > neighbours, double *avgTrans, double *avgPathLength, int type)
 {
-  double sum =0;
+  double sum_trans =0;
+  double sum_path_length =0;
   for(unsigned int i =0; i< neighbours.size(); i++)
   {
     for(unsigned int j =0; j<neighbours.size(); j++)
     {
-      sum += hotPotato1Trans(i, j, neighbours);
+      vector<int> path;
+      vector<int> pathLoopRemoved;
+      sum_trans += hotPotato(i, j, neighbours, &path, &pathLoopRemoved, type);
+      sum_path_length += pathLoopRemoved.size() - 1;
     }
   }
-  return sum/(neighbours.size()*neighbours.size());
+
+  *avgTrans = sum_trans/(neighbours.size()*neighbours.size());
+
+  *avgPathLength = sum_path_length/(neighbours.size()*neighbours.size());
   
 }
 
 //averaged over 10 trials
-vector<double> generateHotPotato1Trials(vector< vector<int> > neighbours)
+void generateHotPotatoTrials(vector< vector<int> > neighbours, vector<double> *avgTransTrial, vector<double> *avgPathLengthTrials, int type)
 {
-  vector<double> avgTransTrial;
+  double avgTrans = 0;
+  double avgPathLength = 0;
+
   for(int i =0; i<10; i++)
   {
-    avgTransTrial.push_back( hotPotato1AvgTrans(neighbours));
+    hotPotatoTrial(neighbours, &avgTrans, &avgPathLength, type);
+    (*avgTransTrial).push_back(avgTrans);
+    (*avgPathLengthTrials).push_back(avgPathLength);
   }
 
-  return avgTransTrial;
 }
 
 //====M A I N=============================================================================================================
@@ -644,17 +664,24 @@ int main (int argc, char *argv[])
   //Distance Vector Routing:  average number of transmissions, average path length
   printOutPut("Distance Vector Routing", DV_avgtrans(neighbours), findAvgPathLength(neighbours) );
 
+  vector <double> hotPotato1_Trans_Trials;
+  vector <double> hotPotato1_Paths_Trials;
+  generateHotPotatoTrials(neighbours, & hotPotato1_Trans_Trials, &hotPotato1_Paths_Trials, 1);
 
-  vector<double> hotPotato1Trials = generateHotPotato1Trials(neighbours);
+  
   
   //Hot Potato I:   average number of transmissions confidence interval,  average path length  confidence interval
-  printOutPut("Hot Potato I", calcMean(hotPotato1Trials), conInterval(hotPotato1Trials)[0], conInterval(hotPotato1Trials)[1], 0,1,2);
+  printOutPut("Hot Potato I", calcMean(hotPotato1_Trans_Trials), conInterval(hotPotato1_Trans_Trials)[0], conInterval(hotPotato1_Trans_Trials)[1], calcMean(hotPotato1_Paths_Trials), conInterval(hotPotato1_Paths_Trials)[0], conInterval(hotPotato1_Paths_Trials)[1]);
 
-  /*
-//Hot Potato II:   average number of transmissions confidence interval,  average path length  confidence interval
-  printOutPut("Hot Potato II", 2.3, 3.4);
+
+  vector <double> hotPotato2_Trans_Trials;
+  vector <double> hotPotato2_Paths_Trials;
+  generateHotPotatoTrials(neighbours, & hotPotato2_Trans_Trials, &hotPotato2_Paths_Trials, 2);
+  
+  //Hot Potato II:   average number of transmissions confidence interval,  average path length  confidence interval
+   printOutPut("Hot Potato II", calcMean(hotPotato2_Trans_Trials), conInterval(hotPotato2_Trans_Trials)[0], conInterval(hotPotato2_Trans_Trials)[1], calcMean(hotPotato2_Paths_Trials), conInterval(hotPotato2_Paths_Trials)[0], conInterval(hotPotato2_Paths_Trials)[1]);
   //--PRINT OUT STUFF----------------------------------------------------------------------------------
-  */
+  
 
   cout <<""<< endl;
   //vector <int> acc = {0,1,2,4,1,0,2,1,3,4,2,1,3,4,3,1,2,4,5 };
