@@ -493,21 +493,21 @@ vector<int>::iterator firstoccurance = v.begin();
 ///x.erase(uniquify(x.begin(), x.end()), x.end())
 vector <int> removeLoopFromPotato (vector <int> list) 
 {
-  /*
+
   vector<int> uniqueArray = list;
 
   uniqueArray.erase(uniquify(uniqueArray.begin(), uniqueArray.end()), uniqueArray.end());
 
-  printoutArray("x ",uniqueArray);
+  //printoutArray("x ",uniqueArray);
 
   
-  printoutArray("list: ", list);
+  //printoutArray("list: ", list);
   
   if (compare(uniqueArray, list))
   {
     return list;
   }
-  */
+
   
   vector <int> c = list;
 
@@ -524,11 +524,13 @@ vector <int> removeLoopFromPotato (vector <int> list)
       //printOutPut("x : ", x);
       if (list[i] == list[x])
       {
+        /*
         cout << "hi" << endl;
         printOutPut("i : ", i);
         cout << "list[i] " << list[i] << endl;
         printOutPut("x : ", x);
         cout << "list[x] " << list[x] << endl;
+        */
         front_index = i;
         back_index = x;// - 1;
 
@@ -546,10 +548,10 @@ vector <int> removeLoopFromPotato (vector <int> list)
   }
   printOutPut("front : ", front_index);
   printOutPut("back : ", back_index);
-  c.erase(c.begin() +front_index, c.begin()+back_index); //was + 1
+  c.erase(c.begin() +front_index, c.begin()+back_index); 
   
   
-  return c; //removeLoopFromPotato (c);
+  return removeLoopFromPotato (c); //was c
 }
 
 
@@ -623,10 +625,10 @@ int main (int argc, char *argv[])
   */
 
   cout <<""<< endl;
-  vector <int> acc = {0, 12, 13, 19, 22, 24, 16, 21, 24 ,16 ,10, 3, 2, 9, 8, 7, 1 };
+  //vector <int> acc = {0, 12, 13, 19, 22, 24, 16, 21, 24 ,16 ,10, 3, 2, 9, 8, 7, 1 };
 
-  printoutArray("before : ", acc);
-  printoutArray("testing :", removeLoopFromPotato(acc));
+  //printoutArray("before : ", acc);
+  //printoutArray("testing :", removeLoopFromPotato(acc));
   
   //vector <int> y = {0,5, 32 ,2,1, 33, 56, 56, 56};
   //vector <int> x = {5,0, 32 ,2,1, 33, 56, 32, 32,  32, 56, 32};
@@ -640,14 +642,14 @@ int main (int argc, char *argv[])
   
   //cout << compare(y, x) << endl;
 
-  /*
+  
   vector <int> temp1 = findHotPotato1Path(0, 1, neighbours);
   
   printoutArray("Before: ", temp1);
 
   
   printoutArray("After: ", removeLoopFromPotato(temp1));
-  */
+  
   //cout << "Currently testing: "<< findHotPotato1Path(0, 1, neighbours) << endl;
   
   
