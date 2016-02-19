@@ -483,11 +483,6 @@ vector <int> findHotPotato1Path(int source, int dest, vector< vector<int> > neig
   return path;
 }
 
-/*
-vector<int>::iterator firstoccurance = v.begin(); 
-      v.erase(firstoccurance, it);
-  
- */
 
 //Take in vector and remove any loops
 ///x.erase(uniquify(x.begin(), x.end()), x.end())
@@ -556,7 +551,16 @@ vector <int> removeLoopFromPotato (vector <int> list)
   return removeLoopFromPotato (c); //was c
 }
 
+double hotPotato1Trans(int source, int dest, vector< vector<int> > neighbours)
+{
+  vector<int> path = findHotPotato1Path(source, dest, neighbours);
+  vector<int> pathLoopRemoved = removeLoopFromPotato(path);
 
+  printoutArray("path: ", path);
+  printoutArray("pathLoopRemoved: ", pathLoopRemoved);
+  
+  return path.size() + pathLoopRemoved.size() - 2;  
+}
 
 //====M A I N=============================================================================================================
 
@@ -627,10 +631,10 @@ int main (int argc, char *argv[])
   */
 
   cout <<""<< endl;
-  vector <int> acc = {0,1,2,4,1,0,2,1,3,4,2,1,3,4,3,1,2,4,5 };
+  //vector <int> acc = {0,1,2,4,1,0,2,1,3,4,2,1,3,4,3,1,2,4,5 };
 
-  printoutArray("before : ", acc);
-  printoutArray("testing :", removeLoopFromPotato(acc));
+  //printoutArray("before : ", acc);
+  //printoutArray("testing :", removeLoopFromPotato(acc));
   
   //vector <int> y = {0,5, 32 ,2,1, 33, 56, 56, 56};
   //vector <int> x = {5,0, 32 ,2,1, 33, 56, 32, 32,  32, 56, 32};
@@ -653,6 +657,7 @@ int main (int argc, char *argv[])
   printoutArray("After:  ", removeLoopFromPotato(temp1));
   */
 
+  cout << hotPotato1Trans(0, 1, neighbours) << endl;
   
   //cout << "Currently testing: "<< findHotPotato1Path(0, 1, neighbours) << endl;
   
