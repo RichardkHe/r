@@ -88,7 +88,7 @@ double calcStd(vector<double> inputlist)
 
   std = sqrt(std);
 
-  return std;
+  return (double)std;
 }
 
 //Calculate the confidence interval
@@ -520,7 +520,6 @@ vector <int> removeLoopFromPotato (vector <int> list)
       if (list[i] == list[x])
       {
 
-        printOutPut("removed : ", list[i]);
         /*
         cout << "hi" << endl;
         printOutPut("i : ", i);
@@ -555,11 +554,34 @@ double hotPotato1Trans(int source, int dest, vector< vector<int> > neighbours)
 {
   vector<int> path = findHotPotato1Path(source, dest, neighbours);
   vector<int> pathLoopRemoved = removeLoopFromPotato(path);
-
-  printoutArray("path: ", path);
-  printoutArray("pathLoopRemoved: ", pathLoopRemoved);
   
   return path.size() + pathLoopRemoved.size() - 2;  
+}
+
+double hotPotato1AvgTrans(vector< vector<int> > neighbours)
+{
+  double sum =0;
+  for(unsigned int i =0; i< neighbours.size(); i++)
+  {
+    for(unsigned int j =0; j<neighbours.size(); j++)
+    {
+      sum += hotPotato1Trans(i, j, neighbours);
+    }
+  }
+  return sum/(neighbours.size()*neighbours.size());
+  
+}
+
+//averaged over 10 trials
+vector<double> generateHotPotato1Trials(vector< vector<int> > neighbours)
+{
+  vector<double> avgTransTrial;
+  for(int i =0; i<10; i++)
+  {
+    avgTransTrial.push_back( hotPotato1AvgTrans(neighbours));
+  }
+
+  return avgTransTrial;
 }
 
 //====M A I N=============================================================================================================
@@ -622,10 +644,14 @@ int main (int argc, char *argv[])
   //Distance Vector Routing:  average number of transmissions, average path length
   printOutPut("Distance Vector Routing", DV_avgtrans(neighbours), findAvgPathLength(neighbours) );
 
-  /*
+
+  vector<double> hotPotato1Trials = generateHotPotato1Trials(neighbours);
+  
   //Hot Potato I:   average number of transmissions confidence interval,  average path length  confidence interval
-  printOutPut("Hot Potato I", 2.3, 3.4);
-  //Hot Potato II:   average number of transmissions confidence interval,  average path length  confidence interval
+  printOutPut("Hot Potato I", calcMean(hotPotato1Trials), conInterval(hotPotato1Trials)[0], conInterval(hotPotato1Trials)[1], 0,1,2);
+
+  /*
+//Hot Potato II:   average number of transmissions confidence interval,  average path length  confidence interval
   printOutPut("Hot Potato II", 2.3, 3.4);
   //--PRINT OUT STUFF----------------------------------------------------------------------------------
   */
@@ -657,7 +683,6 @@ int main (int argc, char *argv[])
   printoutArray("After:  ", removeLoopFromPotato(temp1));
   */
 
-  cout << hotPotato1Trans(0, 1, neighbours) << endl;
   
   //cout << "Currently testing: "<< findHotPotato1Path(0, 1, neighbours) << endl;
   
