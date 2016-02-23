@@ -663,7 +663,7 @@ int main (int argc, char *argv[])
 
   cout << ""<< endl;
   //N        average degree of the network  
-  cout <<"#ofNodes: "  <<number_of_nodes<< "  Avg#OfNeighbours(DEGREE): " << degreeOfNetwork(neighbours) << endl;
+  cout <<number_of_nodes<< "  " << degreeOfNetwork(neighbours) << endl;
   
   //Link State Routing:    average number of transmissions,   average path length 
   printOutPut("Link State Routing", linkStateAvgTrans(neighbours), findAvgPathLength(neighbours) );
@@ -709,8 +709,6 @@ int main (int argc, char *argv[])
   //y.erase(uniquify(y.begin(), y.end()), y.end());
   //x.erase(uniquify(x.begin(), x.end()), x.enxd());
   
-  cout <<"test: " <<compare(y, x) << endl;
-
   /*
   vector <int> temp1 = findHotPotato1Path(0, 1, neighbours);
   
