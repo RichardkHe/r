@@ -572,10 +572,16 @@ void hotPotatoTrial(vector< vector<int> > neighbours, double *avgTrans, double *
 {
   double sum_trans =0;
   double sum_path_length =0;
+
+  //We are only checking unique pairs, so a-b is check then b-a is not checked
+  int loopCount = 0;
+  
   for(unsigned int i =0; i< neighbours.size(); i++)
   {
-    for(unsigned int j =0; j<neighbours.size(); j++)
+    
+    for(unsigned int j = i+1; j<neighbours.size(); j++)
     {
+      loopCount++;
       vector<int> path;
       vector<int> pathLoopRemoved;
       sum_trans += hotPotato(i, j, neighbours, &path, &pathLoopRemoved, type);
@@ -586,7 +592,7 @@ void hotPotatoTrial(vector< vector<int> > neighbours, double *avgTrans, double *
 
   *avgTrans = sum_trans/(neighbours.size());//*neighbours.size());
 
-  *avgPathLength = sum_path_length/(neighbours.size()*neighbours.size());
+  *avgPathLength = sum_path_length/(loopCount);//(neighbours.size()*neighbours.size());
   
 }
 
@@ -687,14 +693,14 @@ int main (int argc, char *argv[])
 
   cout <<""<< endl;
 
-  cout <<"Diam: "<<CalcDiam(neighbours) << endl;
+  //cout <<"Diam: "<<CalcDiam(neighbours) << endl;
   //vector <int> acc = {0,1,2,4,1,0,2,1,3,4,2,1,3,4,3,1,2,4,5 };
 
   //printoutArray("before : ", acc);
   //printoutArray("testing :", removeLoopFromPotato(acc));
   
-  //vector <int> y = {0,5, 32 ,2,1, 33, 56, 56, 56};
-  //vector <int> x = {5,0, 32 ,2,1, 33, 56, 32, 32,  32, 56, 32};
+  vector <int> y = {0,5};
+  vector <int> x = {5,0};
 
   //x.erase(x.begin()+5, x.begin()+1);
 
@@ -703,7 +709,7 @@ int main (int argc, char *argv[])
   //y.erase(uniquify(y.begin(), y.end()), y.end());
   //x.erase(uniquify(x.begin(), x.end()), x.enxd());
   
-  //cout << compare(y, x) << endl;
+  cout <<"test: " <<compare(y, x) << endl;
 
   /*
   vector <int> temp1 = findHotPotato1Path(0, 1, neighbours);
