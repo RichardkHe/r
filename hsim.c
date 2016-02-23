@@ -580,10 +580,11 @@ void hotPotatoTrial(vector< vector<int> > neighbours, double *avgTrans, double *
       vector<int> pathLoopRemoved;
       sum_trans += hotPotato(i, j, neighbours, &path, &pathLoopRemoved, type);
       sum_path_length += pathLoopRemoved.size() - 1;
+      //printoutArray("path :", path);
     }
   }
 
-  *avgTrans = sum_trans/(neighbours.size()*neighbours.size());
+  *avgTrans = sum_trans/(neighbours.size());//*neighbours.size());
 
   *avgPathLength = sum_path_length/(neighbours.size()*neighbours.size());
   
@@ -681,9 +682,12 @@ int main (int argc, char *argv[])
   //Hot Potato II:   average number of transmissions confidence interval,  average path length  confidence interval
    printOutPut("Hot Potato II", calcMean(hotPotato2_Trans_Trials), conInterval(hotPotato2_Trans_Trials)[0], conInterval(hotPotato2_Trans_Trials)[1], calcMean(hotPotato2_Paths_Trials), conInterval(hotPotato2_Paths_Trials)[0], conInterval(hotPotato2_Paths_Trials)[1]);
   //--PRINT OUT STUFF----------------------------------------------------------------------------------
+
   
 
   cout <<""<< endl;
+
+  cout <<"Diam: "<<CalcDiam(neighbours) << endl;
   //vector <int> acc = {0,1,2,4,1,0,2,1,3,4,2,1,3,4,3,1,2,4,5 };
 
   //printoutArray("before : ", acc);
