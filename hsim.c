@@ -20,7 +20,7 @@ using namespace std;
 //FROM: http://stackoverflow.com/questions/12200486/how-to-remove-duplicates-from-unsorted-stdvector-while-keeping-the-original-or
 
 /*This stuff is used to remove duplicates from an unsorted vector basically. This is used in general in our program for removing duplicates for providing a base case for
-  our recursive removing loops function. 
+  our recursive removing loops function.
  */
 struct target_less
 {
@@ -57,7 +57,7 @@ template<class It> It uniquify(It begin, It const end)
 //============================================================================================================================================
 //FROM: http://stackoverflow.com/questions/10506595/how-do-i-check-if-two-stdvectors-contain-only-the-same-elements
 /*
-  Used to check if two vectors have the same elements. 
+  Used to check if two vectors have the same elements.
  */
 
 bool compare(vector<int> v1, vector<int> v2)
@@ -81,7 +81,7 @@ vector<int> vecstr_to_vecint(vector<string> vs)
         int temp;
         iss >> temp;
         ret.push_back(temp);
-    }  
+    }
     return ret;
 }
 
@@ -105,7 +105,7 @@ double calcMean (vector<double> inputlist)
   return double(sum/n);
 }
 
-//calculate the standard deviation 
+//calculate the standard deviation
 double calcStd(vector<double> inputlist)
 {
   double mean = calcMean(inputlist);
@@ -180,7 +180,7 @@ void printOutPut(string x, double a, double a1, double a2, double b, double b1, 
   cout << x << ":  " << a <<" (" << a1 <<", " << a2 <<"), " << b <<" (" << b1 <<", " << b2 <<")" <<endl;
 }
 //--------------------------------------------------------------------------------------
-//Print format": Link State Routing:    average number of transmissions,   average path length 
+//Print format": Link State Routing:    average number of transmissions,   average path length
 void printOutPut(string x, double a, double b)
 {
   cout << x << ":  " << a << ", " << b <<endl;
@@ -220,14 +220,14 @@ double degreeOfNetwork(vector< vector<int> > neighbours)
   {
     sum += degreeOfNode(i, neighbours);
   }
-  
+
   return sum/neighbours.size();
 }
 
 //Contains function for vector, check if item is in list or not, will return 1 if found in list, else 0 if not.
 bool elementInList(vector <int> list, int item)
 {
-  return (find(list.begin(), list.end(), item) != list.end()); 
+  return (find(list.begin(), list.end(), item) != list.end());
 }
 
 //find the minimum index of the smallest distance to neighbour node, this used for dijkstra algorithm.
@@ -235,7 +235,7 @@ int findMinIndex(vector <int> distance, vector<int> queue)
 {
   int min_value = 999999999;
   int min_index = -1;
-  
+
   for(unsigned int i =0; i< queue.size() ; i++)
   {
     if (distance[(queue[i])] < min_value)
@@ -249,8 +249,8 @@ int findMinIndex(vector <int> distance, vector<int> queue)
 
 //Find the maximum value of a list and return it.
 int findMax( vector<int> list)
-{ 
-  return *(max_element(list.begin(), list.end())); 
+{
+  return *(max_element(list.begin(), list.end()));
 }
 
 //Generate a queue(vector of int) of 0, ..., size-1 and return it.
@@ -294,14 +294,14 @@ vector< int > shortPathDistance (int source, vector< vector<int> > neighbours)
   //Create storage for distance vector
   vector<int> distance(neighbours.size());
 
-  //initialize 
+  //initialize
   for(unsigned int i =0; i<neighbours.size(); i++)
   {
     if (elementInList(neighbours[i], source))
     {
       //The node is a neighbour so it 1 away
       distance[i]= 1;
-      
+
     }
     else
     {
@@ -320,14 +320,14 @@ vector< int > shortPathDistance (int source, vector< vector<int> > neighbours)
     int nextNodeQIndex = findMinIndex(distance, queue);
     int nextNodeIndex = (queue[nextNodeQIndex]);
     vector<int> neighbours_of_nextNode = (neighbours[nextNodeIndex]);
-    
+
     //pop off
     queue.erase(queue.begin() + nextNodeQIndex);
 
     for(unsigned int i =0; i< neighbours_of_nextNode.size(); i++)
     {
       int neighbour = (neighbours_of_nextNode)[i];
-      
+
       if( elementInList(queue, neighbour))
       {
         //calculate the min path
@@ -354,11 +354,11 @@ int CalcDiam( vector< vector<int> > neighbours )
 {
   //Calculate longest shortest path
   int max_path = 0;
-  
+
   for(unsigned int i=0; i<neighbours.size(); i++)
   {
     int node = i;
-    
+
     int localmax = findMax(shortPathDistance(node, neighbours));
 
     if(localmax > max_path)
@@ -411,31 +411,35 @@ double DV_avgtrans(vector< vector<int> > neighbours)
  */
 
 //Here we simulate the flooding process of linkstate with memory
+//This function returns the total number of transmissions required to broadcast
+//a link state information from a particular source to all other nodes.
 double linkStateFlooding(int source, vector< vector<int> > neighbours)
 {
-  //store number of transmissions
+  //store number of transmissions required to setup broacast a link state info.
   int trans = 0;
-  
+
+  //This array will contain 0 or 1, indicating whether a node has sent the current link state information already or not.
   vector <int> nodesSend(neighbours.size());
-  
-  vector<int> queue; //this will contains nodes in a sequence
-  vector<int> queueParent; //this will contains parent node parallel list
-  
+
+  vector<int> queue; //this will contain nodes in a sequence that are next in line to send.
+  vector<int> queueParent; //this will contain parent nodes who sent the information to the children.
+  //e.g) parent of queue[0] == queueParent[0]
+
   //send to out going links, does not send if its a deadend, else it must send once, and receive once, and source only once
   //We can check because each node will tranmission unless it is a dead end.
-  
+
   queueParent.push_back(-1);
   queue.push_back(source);
-  
+
   while(!queue.empty())
   {
     //Pop the front
-    int current_node = queue[0];   
-    queue.erase(queue.begin());
+    int current_node = queue[0]; //Get the first element from the queue,
+    queue.erase(queue.begin());  //remove that element from the queue.
 
     int parent = queueParent[0];
     queueParent.erase(queueParent.begin());
-    
+
     //If it has not send yet
     if(nodesSend[current_node] != 1)
     {
@@ -448,6 +452,7 @@ double linkStateFlooding(int source, vector< vector<int> > neighbours)
       //Sending to its neighbours
       for(unsigned int i=0; i< node_neighbours.size(); i++)
       {
+        //Don't send to the immediate parent.
         if(parent != node_neighbours[i])
         {
           queueParent.push_back(current_node);
@@ -494,14 +499,14 @@ vector <int> findHotPotatoPath(int source, int dest, vector< vector<int> > neigh
 
   //While we have not reach the destination
   while((currentNode = path[path.size()-1]) != dest)
-  {     
+  {
     vector<int> current_node_neighbours = neighbours[currentNode];
 
     //ensure we can pass to neighbour
     if((path.size() >= 2) && (current_node_neighbours.size() >1))
     {
       int previousNode = path[(path.size()-2)];
-      //Do not pass backwards by removing sender from receiver's list 
+      //Do not pass backwards by removing sender from receiver's list
       current_node_neighbours = removeElement(current_node_neighbours, previousNode);
     }
 
@@ -512,7 +517,7 @@ vector <int> findHotPotatoPath(int source, int dest, vector< vector<int> > neigh
     //hotpotato1 = 1
     //hotpotato2 = 2
     if((type == 2) && (elementInList(current_node_neighbours, dest)))
-    {      
+    {
       rand_neighbour = dest;
     }
     else
@@ -534,7 +539,7 @@ vector <int> findHotPotatoPath(int source, int dest, vector< vector<int> > neigh
   This recursively remove all loops from given list which is a path of the hot potato. The base case is checking whether the elements in the list is unqiue,
   because once all loops are removed all duplicates are removed thus we know all loops are removed.
  */
-vector <int> removeLoopFromPotato (vector <int> list) 
+vector <int> removeLoopFromPotato (vector <int> list)
 {
   //-------------------------------------------------------------------------------------
   //Base case stuff
@@ -548,7 +553,7 @@ vector <int> removeLoopFromPotato (vector <int> list)
   //-------------------------------------------------------------------------------------
 
   //We remove loops by checking the front and back of the vector till we get a match, once we get a match we remove the loop.
-  
+
   vector <int> c = list;
 
   int front_index = 0;
@@ -559,7 +564,7 @@ vector <int> removeLoopFromPotato (vector <int> list)
   //iterate over front and back of the potato trail till we find loop.
   for(int i =0; i<(int)list.size(); i++)
   {
-    
+
     for (int x = (int)list.size()-1; x > i+1; x--)
     {
       if (list[i] == list[x])
@@ -577,11 +582,11 @@ vector <int> removeLoopFromPotato (vector <int> list)
     {
       break;
     }
-    
+
   }
   //Remove loop portion of the potato trail. This removes one loop found.
-  c.erase(c.begin() +front_index, c.begin()+back_index); 
- 
+  c.erase(c.begin() +front_index, c.begin()+back_index);
+
   return removeLoopFromPotato (c);
 }
 
@@ -589,11 +594,11 @@ vector <int> removeLoopFromPotato (vector <int> list)
 
 double hotPotato(int source, int dest, vector< vector<int> > neighbours, vector<int> *path, vector<int> *pathLoopRemoved, int type)
 {
-  
+
   *path = findHotPotatoPath(source, dest, neighbours, type);
   *pathLoopRemoved = removeLoopFromPotato(*path);
-  
-  return (*path).size() + (*pathLoopRemoved).size() - 2;  
+
+  return (*path).size() + (*pathLoopRemoved).size() - 2;
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------
@@ -607,10 +612,10 @@ void hotPotatoTrial(vector< vector<int> > neighbours, double *avgTrans, double *
 
   //We are only checking unique pairs, so a-b is check then b-a is not checked
   int loopCount = 0;
-  
+
   for(unsigned int i =0; i< neighbours.size(); i++)
   {
-    
+
     for(unsigned int j = i+1; j<neighbours.size(); j++)
     {
       loopCount++;
@@ -623,10 +628,10 @@ void hotPotatoTrial(vector< vector<int> > neighbours, double *avgTrans, double *
 
   //calculate average number of transmissions
   *avgTrans = sum_trans/(neighbours.size());
-  
+
   //calculate avergae path legnth
   *avgPathLength = sum_path_length/(loopCount);
-  
+
 }
 //---------------------------------------------------------------------------------------------------------------------------------------
 /*
@@ -653,7 +658,7 @@ int main (int argc, char *argv[])
 {
   //Change the random seed each time.
   srand(time(NULL));
-  
+
   //-------------------------------------------------------------------
   //Check the number of arguments, that its valid
   //EX) ./hsim graph1.txt
@@ -674,7 +679,7 @@ int main (int argc, char *argv[])
 
   //Reading file
   ifstream file(argv[1]);
-  string str; 
+  string str;
   while (getline(file, str))
   {
     //http://www.cplusplus.com/forum/beginner/87238/
@@ -683,28 +688,28 @@ int main (int argc, char *argv[])
     vector<string> tokens(beg, end);
 
     //vecstr_to_vecint(tokens);
-    
+
     neighbours.push_back(vecstr_to_vecint(tokens));
   }
 
   //Get number of nodes
   vector<int> temp = neighbours[0];
   int number_of_nodes = temp[0];
-  
+
   //Erase the number of nodes from neighbours
   neighbours.erase(neighbours.begin());
   //-----------------------------------------------------------------------------------------------------------------------------------------------------------
-  
+
 
   //--PRINT OUT STUFF----------------------------------------------------------------------------------
 
   cout << ""<< endl;
-  //N        average degree of the network  
+  //N        average degree of the network
   cout <<number_of_nodes<< "  " << degreeOfNetwork(neighbours) << endl;
-  
-  //Link State Routing:    average number of transmissions,   average path length 
+
+  //Link State Routing:    average number of transmissions,   average path length
   printOutPut("Link State Routing", linkStateAvgTrans(neighbours), findAvgPathLength(neighbours) );
-  
+
   //Distance Vector Routing:  average number of transmissions, average path length
   printOutPut("Distance Vector Routing", DV_avgtrans(neighbours), findAvgPathLength(neighbours) );
 
@@ -712,19 +717,19 @@ int main (int argc, char *argv[])
   vector <double> hotPotato1_Paths_Trials;
   generateHotPotatoTrials(neighbours, & hotPotato1_Trans_Trials, &hotPotato1_Paths_Trials, 1);
 
-    
+
   //Hot Potato I:   average number of transmissions confidence interval,  average path length  confidence interval
   printOutPut("Hot Potato I", calcMean(hotPotato1_Trans_Trials), conInterval(hotPotato1_Trans_Trials)[0], conInterval(hotPotato1_Trans_Trials)[1], calcMean(hotPotato1_Paths_Trials), conInterval(hotPotato1_Paths_Trials)[0], conInterval(hotPotato1_Paths_Trials)[1]);
 
   vector <double> hotPotato2_Trans_Trials;
   vector <double> hotPotato2_Paths_Trials;
   generateHotPotatoTrials(neighbours, & hotPotato2_Trans_Trials, &hotPotato2_Paths_Trials, 2);
-  
+
   //Hot Potato II:   average number of transmissions confidence interval,  average path length  confidence interval
    printOutPut("Hot Potato II", calcMean(hotPotato2_Trans_Trials), conInterval(hotPotato2_Trans_Trials)[0], conInterval(hotPotato2_Trans_Trials)[1], calcMean(hotPotato2_Paths_Trials), conInterval(hotPotato2_Paths_Trials)[0], conInterval(hotPotato2_Paths_Trials)[1]);
 
    cout <<""<< endl;
-   
+
   //--PRINT OUT STUFF----------------------------------------------------------------------------------
 
   return 0;
