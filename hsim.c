@@ -610,7 +610,7 @@ void hotPotatoTrial(vector< vector<int> > neighbours, double *avgTrans, double *
   //tract path
   double sum_path_length =0;
 
-  //We are only checking unique pairs, so a-b is check then b-a is not checked
+  //We are only checking unique pairs, so if a-b is checked then b-a is not checked
   int loopCount = 0;
 
   for(unsigned int i =0; i< neighbours.size(); i++)
