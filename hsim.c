@@ -376,16 +376,21 @@ int CalcDiam( vector< vector<int> > neighbours )
 double findAvgPathLength(vector< vector<int> > neighbours)
 {
   int sum = 0;
+  int count = 0;
 
   for(unsigned int i=0; i< neighbours.size(); i++)
   {
     for (unsigned int x =0; x< neighbours.size(); x++)
-
     {
+    	if (x == i) //Do not consider path to self.
+    	{
+    		continue;
+    	}
       sum += findPathLength(x, i, neighbours);
+      count++;
     }
   }
-  return (double)sum/(neighbours.size()*neighbours.size());
+  return ((double)sum/count);
 }
 
 //============================================================================================================
